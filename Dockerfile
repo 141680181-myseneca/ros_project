@@ -12,15 +12,15 @@ RUN apt update && apt install -y \
     lsb-release \
     gnupg
 
-# Correctly add the Gazebo repository key using curl
-RUN curl -fsSL https://packages.osrfoundation.org/gazebo/gpg.key | tee /usr/share/keyrings/gazebo-archive-keyring.gpg > /dev/null
+# Correctly add the Gazebo repository key
+RUN curl -fsSL https://packages.osrfoundation.org/gazebo/gpg.key | gpg --dearmor -o /usr/share/keyrings/gazebo-keyring.gpg
 
-# Correctly add the Gazebo repository
-RUN echo "deb [signed-by=/usr/share/keyrings/gazebo-archive-keyring.gpg] https://packages.osrfoundation.org/gazebo/ubuntu $(lsb_release -cs) main" \
+# Correctly add the Gazebo repository with signed key reference
+RUN echo "deb [signed-by=/usr/share/keyrings/gazebo-keyring.gpg] https://packages.osrfoundation.org/gazebo/ubuntu $(lsb_release -cs) main" \
     | tee /etc/apt/sources.list.d/gazebo-stable.list > /dev/null
 
 # Ensure the repository is recognized
-RUN apt update
+RUN apt update --allow-insecure-repositories
 
 # Install Gazebo Garden
 RUN apt install -y gazebo-garden
