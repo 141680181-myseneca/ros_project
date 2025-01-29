@@ -22,7 +22,7 @@ RUN apt-get update && apt-get install -y \
 
 # Add the OSRF repository for Gazebo (Correct Method for Ubuntu 24.04)
 RUN mkdir -p /etc/apt/keyrings && \
-    curl -fsSL http://packages.osrfoundation.org/gazebo/gazebo-archive-keyring.gpg | gpg --dearmor -o /etc/apt/keyrings/gazebo-archive-keyring.gpg && \
+    curl -fsSL https://packages.osrfoundation.org/gazebo.key | gpg --dearmor -o /etc/apt/keyrings/gazebo-archive-keyring.gpg && \
     echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/gazebo-archive-keyring.gpg] http://packages.osrfoundation.org/gazebo/ubuntu-stable $(lsb_release -cs) main" | tee /etc/apt/sources.list.d/gazebo-stable.list && \
     apt-get update && apt-get install -y gazebo11
 
