@@ -22,8 +22,8 @@ RUN apt-get update && apt-get install -y \
 
 # Add the OSRF repository for Gazebo (Fixed for Ubuntu 24.04)
 RUN mkdir -p /etc/apt/keyrings && \
-    curl -fsSL http://packages.osrfoundation.org/gazebo/gazebo-key.gpg | tee /etc/apt/keyrings/gazebo-key.gpg > /dev/null && \
-    echo "deb [signed-by=/etc/apt/keyrings/gazebo-key.gpg] http://packages.osrfoundation.org/gazebo/ubuntu-stable $(lsb_release -cs) main" | tee /etc/apt/sources.list.d/gazebo-stable.list > /dev/null && \
+    curl -fsSL http://packages.osrfoundation.org/gazebo/gazebo-archive-keyring.gpg | tee /etc/apt/keyrings/gazebo-archive-keyring.gpg > /dev/null && \
+    echo "deb [signed-by=/etc/apt/keyrings/gazebo-archive-keyring.gpg] http://packages.osrfoundation.org/gazebo/ubuntu-stable $(lsb_release -cs) main" | tee /etc/apt/sources.list.d/gazebo-stable.list > /dev/null && \
     apt-get update && apt-get install -y gazebo11
 
 # Source ROS 2 environment
