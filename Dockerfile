@@ -1,8 +1,10 @@
-# Use ROS 2 Jazzy as the base image
-FROM osrf/ros:jazzy-desktop-full
+# Use a ROS 2 base image that is compatible with Ubuntu 24.04
+FROM osrf/ros:jazzy-desktop
 
+# Set noninteractive installation mode
+ENV DEBIAN_FRONTEND=noninteractive
 # Set up the working directory
-WORKDIR /ros2_ws
+# WORKDIR /ros2_ws
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
@@ -10,30 +12,37 @@ RUN apt-get update && apt-get install -y \
     python3-colcon-common-extensions \
     curl \
     lsb-release \
+    build-essential \
+    cmake \
+    git \
+    lsb-release \
     gnupg2 \
     wget
 
-# Add the OSRF repository
-RUN sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -sc` main" > /etc/apt/sources.list.d/gazebo-stable.list'
-RUN curl -s http://packages.osrfoundation.org/gazebo.key | apt-key add -
+# Add the OSRF repository and install Gazebo
+RUN sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -sc` main" > /etc/apt/sources.list.d/gazebo-stable.list' \
+    && curl -s http://packages.osrfoundation.org/gazebo.key | apt-key add - \
+    && apt-get update && apt-get install -y gazebo11
 
-# Update package lists
-RUN apt-get update
-
-# Install Gazebo from the OSRF repository
-RUN apt-get install -y gazebo11 || apt-get install -y gazebo9
+# # Install Gazebo from the OSRF repository
+# RUN apt-get install -y gazebo11 || apt-get install -y gazebo9
 
 # Source ROS 2 environment
 RUN echo "source /opt/ros/jazzy/setup.bash" >> ~/.bashrc
 
+# Create a workspace for your ROS 2 package
+RUN mkdir -p /root/dev_ws/src
+WORKDIR /root/dev_ws
+
 # Copy the ROS 2 package source code
-COPY ./src /ros2_ws/src
+COPY ./src ./src
 
 # Install missing dependencies using rosdep
-RUN rosdep update && rosdep install --from-paths src --ignore-src -r -y
-
-# Build the ROS 2 workspace
-RUN colcon build
+RUN . /opt/ros/jazzy/setup.bash \
+    && rosdep update \
+    && rosdep install --from-paths src --ignore-src -r -y \
+    && colcon build
 
 # Set up entrypoint to start the robot controller
-CMD ["bash", "-c", "source /ros2_ws/install/setup.bash && ros2 run my_robot_controller move_robot"]
+# CMD ["bash", "-c", "source /ros2_ws/install/setup.bash && ros2 run my_robot_controller move_robot"]
+CMD ["bash", "-c", "source /root/dev_ws/install/setup.bash && ros2 run my_robot_controller move_robot"]

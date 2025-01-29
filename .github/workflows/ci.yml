@@ -3,11 +3,15 @@ name: ROS 2 Docker Build and Push
 on:
   push:
     branches:
-      - project_ros_gaz  # Runs the workflow when code is pushed to main
+      - project_ros_gaz  # Ensure this is the branch you want to target
 
 jobs:
   build-and-push:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest  # This only specifies the host runner, not the build environment
+
+    # Defines the Docker environment to be used for building and pushing
+    container:
+      image: ubuntu:24.04  # Explicitly using Ubuntu 24.04
 
     steps:
       - name: Checkout Repository
@@ -28,14 +32,16 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: your-dockerhub-username/project1_ros2:latest
+          tags: tangbr/project1_ros2:latest  # Customize this tag as necessary
 
   test-container:
     needs: build-and-push
     runs-on: ubuntu-latest
+    container:
+      image: ubuntu:24.04
 
     steps:
       - name: Pull and Run the Docker Container
         run: |
-          docker pull your-dockerhub-username/project1_ros2:latest
-          docker run --rm your-dockerhub-username/project1_ros2
+          docker pull tangbr/project1_ros2:latest
+          docker run --rm tangbr/project1_ros2
