@@ -13,12 +13,15 @@ RUN apt-get update && apt-get install -y \
     gnupg2 \
     wget
 
-# Add the official Gazebo repository
+# Add the OSRF repository for ROS/Gazebo
 RUN sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -sc` main" > /etc/apt/sources.list.d/gazebo-stable.list'
-RUN wget https://packages.osrfoundation.org/gazebo.key -O - | apt-key add -
+RUN curl -s http://packages.osrfoundation.org/gazebo.key | apt-key add -
 
-# Update package lists and install Gazebo
-RUN apt-get update && apt-get install -y gazebo11
+# Update package lists
+RUN apt-get update
+
+# Install Gazebo (try gazebo9 or the correct version for your Ubuntu release)
+RUN apt-get install -y gazebo9
 
 # Source ROS 2 environment
 RUN echo "source /opt/ros/jazzy/setup.bash" >> ~/.bashrc
