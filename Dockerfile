@@ -4,16 +4,23 @@ FROM osrf/ros:jazzy-desktop-full
 # Set up the working directory
 WORKDIR /ros2_ws
 
-# Install system dependencies and add Gazebo package sources
+# Install system dependencies
 RUN apt update && apt install -y \
     software-properties-common \
     python3-colcon-common-extensions \
     curl \
     lsb-release \
-    wget && \
-    wget -qO /usr/share/keyrings/gazebo-archive-keyring.gpg https://packages.osrfoundation.org/gazebo/gpg.key && \
-    echo "deb [signed-by=/usr/share/keyrings/gazebo-archive-keyring.gpg] https://packages.osrfoundation.org/gazebo/ubuntu $(lsb_release -cs) main" | tee /etc/apt/sources.list.d/gazebo-stable.list > /dev/null && \
-    apt update
+    wget
+
+# Correctly add the Gazebo repository key
+RUN wget -qO /usr/share/keyrings/gazebo-archive-keyring.gpg https://packages.osrfoundation.org/gazebo/gpg.key
+
+# Correctly add the Gazebo repository
+RUN echo "deb [signed-by=/usr/share/keyrings/gazebo-archive-keyring.gpg] https://packages.osrfoundation.org/gazebo/ubuntu $(lsb_release -cs) main" \
+    | tee /etc/apt/sources.list.d/gazebo-stable.list
+
+# Ensure the repository is recognized
+RUN apt update
 
 # Install Gazebo Garden
 RUN apt install -y gazebo-garden
