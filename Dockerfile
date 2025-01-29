@@ -13,12 +13,8 @@ RUN apt update && apt install -y \
     gnupg2 \
     wget
 
-# Add Gazebo official repository
-RUN sudo apt update && sudo apt install -y curl && \
-    sudo curl -fsSL https://get.gz.io/gz-garden/install.sh | sudo bash
-
-# Ensure Gazebo Garden is installed
-RUN apt update && apt install -y gz-garden
+# Install Gazebo Garden from source (since it's not in apt)
+RUN curl -sSL http://get.gazebosim.org | bash
 
 # Source ROS 2 environment
 RUN echo "source /opt/ros/jazzy/setup.bash" >> ~/.bashrc
