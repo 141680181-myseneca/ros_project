@@ -4,8 +4,17 @@ FROM osrf/ros:jazzy-desktop-full
 # Set up the working directory
 WORKDIR /ros2_ws
 
+# Add ROS 2 and Gazebo package repositories
+RUN apt update && apt install -y software-properties-common && \
+    add-apt-repository universe && \
+    sudo apt-get update && \
+    sudo apt-get install -y lsb-release curl && \
+    sudo curl -sSL https://packages.osrfoundation.org/gazebo.key | sudo apt-key add - && \
+    sudo sh -c 'echo "deb [arch=amd64] http://packages.osrfoundation.org/gazebo/ubuntu $(lsb_release -cs) main" > /etc/apt/sources.list.d/gazebo-stable.list' && \
+    apt update
+
 # Install dependencies
-RUN apt update && apt install -y \
+RUN apt install -y \
     python3-colcon-common-extensions \
     gazebo11 \
     ros-jazzy-gazebo-ros-pkgs
