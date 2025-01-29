@@ -20,16 +20,10 @@ RUN apt-get update && apt-get install -y \
     libprotobuf-dev protobuf-compiler \
     libboost-all-dev
 
-# Clone Gazebo 11 source code and build it
-RUN git clone --branch gazebo11 https://github.com/osrf/gazebo /gazebo_src \
-    && cd /gazebo_src \
-    && mkdir build && cd build \
-    && cmake .. \
-    && make -j$(nproc) \
-    && make install
-
-# Clean up unnecessary files to reduce image size
-RUN rm -rf /gazebo_src
+# Add the OSRF repository for Gazebo
+RUN sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -sc` main" > /etc/apt/sources.list.d/gazebo-stable.list' \
+    && curl -s http://packages.osrfoundation.org/gazebo.key | apt-key add - \
+    && apt-get update && apt-get install -y gazebo11
 
 # Source ROS 2 environment
 RUN echo "source /opt/ros/jazzy/setup.bash" >> ~/.bashrc
