@@ -10,20 +10,15 @@ RUN apt update && apt install -y \
     python3-colcon-common-extensions \
     curl \
     lsb-release \
-    gnupg
+    gnupg2 \
+    wget
 
-# Correctly add the Gazebo repository key
-RUN curl -fsSL https://packages.osrfoundation.org/gazebo/gpg.key | gpg --dearmor -o /usr/share/keyrings/gazebo-keyring.gpg
+# Correctly add the Gazebo Harmonic repository
+RUN echo "deb http://packages.osrfoundation.org/gazebo/ubuntu $(lsb_release -cs) main" | tee /etc/apt/sources.list.d/gazebo-stable.list > /dev/null
 
-# Correctly add the Gazebo repository with signed key reference
-RUN echo "deb [signed-by=/usr/share/keyrings/gazebo-keyring.gpg] https://packages.osrfoundation.org/gazebo/ubuntu $(lsb_release -cs) main" \
-    | tee /etc/apt/sources.list.d/gazebo-stable.list > /dev/null
-
-# Ensure the repository is recognized
-RUN apt update --allow-insecure-repositories
-
-# Install Gazebo Garden
-RUN apt install -y gazebo-garden
+# Update package lists and install Gazebo Harmonic
+RUN apt update --allow-insecure-repositories && \
+    apt install -y ros-jazzy-gz-sim
 
 # Source ROS 2 environment
 RUN echo "source /opt/ros/jazzy/setup.bash" >> ~/.bashrc
