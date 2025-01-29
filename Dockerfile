@@ -13,12 +13,18 @@ RUN apt update && apt install -y \
     gnupg2 \
     wget
 
-# Add the correct Gazebo repository (without broken GPG key)
+# Add the official Gazebo repository
 RUN echo "deb http://packages.osrfoundation.org/gazebo/ubuntu $(lsb_release -cs) main" \
     | tee /etc/apt/sources.list.d/gazebo-stable.list > /dev/null
 
-# Update package lists and install Gazebo Garden
-RUN apt update --allow-insecure-repositories && apt install -y gz-garden
+# Update package lists
+RUN apt update --allow-insecure-repositories
+
+# Install Gazebo and ROS-Gazebo bridge
+RUN apt install -y \
+    ros-humble-gz-sim \
+    gazebo11 \
+    ros-humble-gazebo-ros-pkgs
 
 # Source ROS 2 environment
 RUN echo "source /opt/ros/jazzy/setup.bash" >> ~/.bashrc
