@@ -13,18 +13,14 @@ RUN apt update && apt install -y \
     gnupg2 \
     wget
 
-# Add the official Gazebo repository
-RUN echo "deb http://packages.osrfoundation.org/gazebo/ubuntu $(lsb_release -cs) main" \
-    | tee /etc/apt/sources.list.d/gazebo-stable.list > /dev/null
+# Add the Gazebo repository for ROS packages
+RUN echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -cs` main" > /etc/apt/sources.list.d/gazebo-stable.list && \
+    curl -s https://packages.osrfoundation.org/gazebo.key | apt-key add -
 
-# Update package lists
-RUN apt update --allow-insecure-repositories
-
-# Install Gazebo and ROS-Gazebo bridge
-RUN apt install -y \
-    ros-humble-gz-sim \
+# Update package lists and install Gazebo compatible with Jazzy
+RUN apt update && apt install -y \
     gazebo11 \
-    ros-humble-gazebo-ros-pkgs
+    ros-jazzy-gazebo-ros-pkgs
 
 # Source ROS 2 environment
 RUN echo "source /opt/ros/jazzy/setup.bash" >> ~/.bashrc
