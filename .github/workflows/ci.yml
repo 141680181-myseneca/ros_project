@@ -3,24 +3,21 @@ name: ROS 2 Docker Build and Push
 on:
   push:
     branches:
-      - project_ros_gaz  # Ensure this is the branch you want to target
+      - project_ros_gaz  # Runs workflow when code is pushed to this branch
 
 jobs:
   build-and-push:
-    runs-on: ubuntu-latest  # This only specifies the host runner, not the build environment
+    runs-on: ubuntu-latest  # Uses the latest available Ubuntu runner
 
-    # Defines the Docker environment to be used for building and pushing
     container:
-      image: ubuntu:24.04  # Explicitly using Ubuntu 24.04
+      image: ubuntu:24.04  # Explicitly runs the job in an Ubuntu 24.04 environment
 
     steps:
-      - name: Install Docker
+      - name: Install Dependencies for CI
         run: |
           apt-get update
-          apt-get install -y docker.io
-          dockerd &
-          sleep 5  # Give Docker some time to start
-          
+          apt-get install -y curl git gnupg2 lsb-release
+
       - name: Checkout Repository
         uses: actions/checkout@v3
 
@@ -39,13 +36,14 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: tangbr/project1_ros2:latest  # Customize this tag as necessary
+          tags: tangbr/project1_ros2:latest  # Replace with your actual Docker Hub username/project
 
   test-container:
     needs: build-and-push
     runs-on: ubuntu-latest
+
     container:
-      image: ubuntu:24.04
+      image: ubuntu:24.04  # Explicitly runs the test in Ubuntu 24.04
 
     steps:
       - name: Pull and Run the Docker Container
