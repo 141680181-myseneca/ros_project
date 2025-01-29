@@ -14,13 +14,18 @@ RUN apt-get update && apt-get install -y \
     cmake \
     git \
     gnupg2 \
-    wget
+    wget \
+    pkg-config \
+    libeigen3-dev \
+    libprotobuf-dev protobuf-compiler \
+    libboost-all-dev
 
-# Add the Gazebo OSRF repository
-RUN curl -s http://packages.osrfoundation.org/gazebo.key | apt-key add - \
-    && sh -c 'echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/gazebo-archive-keyring.gpg] http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -sc` main" > /etc/apt/sources.list.d/gazebo-stable.list' \
-    && apt-get update \
-    && apt-get install -y gazebo11
+# Download and add the Gazebo OSRF repository key securely
+RUN curl -fsSL https://packages.osrfoundation.org/gazebo.key -o /usr/share/keyrings/gazebo-archive-keyring.gpg
+
+# Add the OSRF repository for Gazebo securely
+RUN echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/gazebo-archive-keyring.gpg] https://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -sc` main" > /etc/apt/sources.list.d/gazebo-stable.list && \
+    apt-get update && apt-get install -y gazebo11
 
 # Source ROS 2 environment
 RUN echo "source /opt/ros/jazzy/setup.bash" >> ~/.bashrc
