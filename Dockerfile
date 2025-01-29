@@ -12,10 +12,10 @@ RUN apt update && apt install -y \
     lsb-release && \
     wget -O - https://packages.osrfoundation.org/gazebo/gpg.key | tee /usr/share/keyrings/gazebo-archive-keyring.gpg > /dev/null && \
     echo "deb [signed-by=/usr/share/keyrings/gazebo-archive-keyring.gpg] http://packages.osrfoundation.org/gazebo/ubuntu $(lsb_release -cs) main" | tee /etc/apt/sources.list.d/gazebo-stable.list > /dev/null && \
-    apt update --allow-insecure-repositories
+    apt update
 
 # Install Gazebo Garden
-RUN apt install -y gz-garden
+RUN apt install -y gazebo-garden
 
 # Source ROS 2 environment
 RUN echo "source /opt/ros/jazzy/setup.bash" >> ~/.bashrc
