@@ -13,13 +13,12 @@ RUN apt update && apt install -y \
     gnupg2 \
     wget
 
-# Add Gazebo Garden repository (without broken GPG key)
-RUN echo "deb http://packages.osrfoundation.org/gazebo/ubuntu $(lsb_release -cs) main" \
-    | tee /etc/apt/sources.list.d/gazebo-stable.list > /dev/null
+# Add Gazebo official repository
+RUN sudo apt update && sudo apt install -y curl && \
+    sudo curl -fsSL https://get.gz.io/gz-garden/install.sh | sudo bash
 
-# Update package lists and install Gazebo Garden
-RUN apt update --allow-insecure-repositories && \
-    apt install -y gz-garden
+# Ensure Gazebo Garden is installed
+RUN apt update && apt install -y gz-garden
 
 # Source ROS 2 environment
 RUN echo "source /opt/ros/jazzy/setup.bash" >> ~/.bashrc
