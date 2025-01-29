@@ -10,8 +10,8 @@ RUN apt update && apt install -y \
     python3-colcon-common-extensions \
     curl \
     lsb-release && \
-    curl -fsSL http://packages.osrfoundation.org/gazebo/gpg.key | tee /usr/share/keyrings/gazebo-keyring.asc > /dev/null && \
-    echo "deb [signed-by=/usr/share/keyrings/gazebo-keyring.asc] http://packages.osrfoundation.org/gazebo/ubuntu $(lsb_release -cs) main" | tee /etc/apt/sources.list.d/gazebo-stable.list > /dev/null && \
+    curl -fsSL https://packages.osrfoundation.org/gazebo/gpg.key | tee /usr/share/keyrings/gazebo-keyring.gpg > /dev/null && \
+    echo "deb [signed-by=/usr/share/keyrings/gazebo-keyring.gpg] http://packages.osrfoundation.org/gazebo/ubuntu $(lsb_release -cs) main" | tee /etc/apt/sources.list.d/gazebo-stable.list && \
     apt update
 
 # Install Gazebo Garden
