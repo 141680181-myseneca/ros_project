@@ -13,14 +13,9 @@ RUN apt update && apt install -y \
     gnupg2 \
     wget
 
-# Add the Gazebo repository for ROS packages
-RUN echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -cs` main" > /etc/apt/sources.list.d/gazebo-stable.list && \
-    curl -s https://packages.osrfoundation.org/gazebo.key | apt-key add -
-
-# Update package lists and install Gazebo compatible with Jazzy
+# Install Gazebo from the official repositories
 RUN apt update && apt install -y \
-    gazebo11 \
-    ros-jazzy-gazebo-ros-pkgs
+    gazebo11
 
 # Source ROS 2 environment
 RUN echo "source /opt/ros/jazzy/setup.bash" >> ~/.bashrc
