@@ -3,30 +3,13 @@ name: ROS 2 Docker Build and Push
 on:
   push:
     branches:
-      - project_ros_gaz
+      - project_ros_gaz  # Runs workflow when code is pushed to this branch
 
 jobs:
   build-and-push:
-    runs-on: ubuntu-latest
-
-    container:
-      image: ubuntu:24.04
-
-    services:
-      docker:
-        image: docker:dind
-        privileged: true
+    runs-on: ubuntu-latest  # GitHub runner already has Docker pre-installed
 
     steps:
-      - name: Install Docker
-        run: |
-          apt-get update
-          apt-get install -y docker.io
-
-      - name: Start Docker Daemon
-        run: |
-          dockerd > /dev/null 2>&1 &
-
       - name: Checkout Repository
         uses: actions/checkout@v3
 
@@ -45,14 +28,11 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: tangbr/project1_ros2:latest
+          tags: tangbr/project1_ros2:latest  # Replace with your actual Docker Hub username/project
 
   test-container:
     needs: build-and-push
     runs-on: ubuntu-latest
-
-    container:
-      image: ubuntu:24.04
 
     steps:
       - name: Pull and Run the Docker Container
