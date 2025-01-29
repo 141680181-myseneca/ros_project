@@ -14,6 +14,13 @@ jobs:
       image: ubuntu:24.04  # Explicitly using Ubuntu 24.04
 
     steps:
+      - name: Install Docker
+        run: |
+          apt-get update
+          apt-get install -y docker.io
+          dockerd &
+          sleep 5  # Give Docker some time to start
+          
       - name: Checkout Repository
         uses: actions/checkout@v3
 
