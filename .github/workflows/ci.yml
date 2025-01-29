@@ -7,16 +7,19 @@ on:
 
 jobs:
   build-and-push:
-    runs-on: ubuntu-latest  # Uses the latest available Ubuntu runner
+    runs-on: ubuntu-latest
 
     container:
-      image: ubuntu:24.04  # Explicitly runs the job in an Ubuntu 24.04 environment
+      image: ubuntu:24.04  # Explicitly running inside Ubuntu 24.04
 
     steps:
-      - name: Install Dependencies for CI
+      - name: Install Docker (Fix Missing Docker Error)
         run: |
           apt-get update
-          apt-get install -y curl git gnupg2 lsb-release
+          apt-get install -y docker.io
+          service docker start  # Start Docker daemon
+          usermod -aG docker $USER  # Ensure user can run Docker commands
+          newgrp docker
 
       - name: Checkout Repository
         uses: actions/checkout@v3
@@ -43,7 +46,7 @@ jobs:
     runs-on: ubuntu-latest
 
     container:
-      image: ubuntu:24.04  # Explicitly runs the test in Ubuntu 24.04
+      image: ubuntu:24.04
 
     steps:
       - name: Pull and Run the Docker Container
