@@ -12,7 +12,7 @@ setup(
     ],
     entry_points={
         'console_scripts': [
-            'some_entry_point = my_robot_controller.some_module:main'
+            'move_robot = my_robot_controller.move_robot:main'
         ],
     },
 )
