@@ -13,12 +13,8 @@ RUN apt update && apt install -y \
     gnupg2 \
     wget
 
-# Correctly add the Gazebo Harmonic repository
-RUN echo "deb http://packages.osrfoundation.org/gazebo/ubuntu $(lsb_release -cs) main" | tee /etc/apt/sources.list.d/gazebo-stable.list > /dev/null
-
-# Update package lists and install Gazebo Harmonic
-RUN apt update --allow-insecure-repositories && \
-    apt install -y ros-jazzy-gz-sim
+# Update package lists and install Gazebo Garden for ROS 2 Jazzy
+RUN apt update && apt install -y ros-jazzy-gz-garden
 
 # Source ROS 2 environment
 RUN echo "source /opt/ros/jazzy/setup.bash" >> ~/.bashrc
