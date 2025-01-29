@@ -1,0 +1,41 @@
+name: ROS 2 Docker Build and Push
+
+on:
+  push:
+    branches:
+      - project_ros_gaz  # Runs the workflow when code is pushed to main
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Set Up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+      - name: Build and Push Docker Image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: your-dockerhub-username/project1_ros2:latest
+
+  test-container:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Pull and Run the Docker Container
+        run: |
+          docker pull your-dockerhub-username/project1_ros2:latest
+          docker run --rm your-dockerhub-username/project1_ros2
