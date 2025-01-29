@@ -10,14 +10,14 @@ RUN apt update && apt install -y \
     python3-colcon-common-extensions \
     curl \
     lsb-release \
-    wget
+    gnupg
 
-# Correctly add the Gazebo repository key
-RUN wget -qO /usr/share/keyrings/gazebo-archive-keyring.gpg https://packages.osrfoundation.org/gazebo/gpg.key
+# Correctly add the Gazebo repository key using curl
+RUN curl -fsSL https://packages.osrfoundation.org/gazebo/gpg.key | tee /usr/share/keyrings/gazebo-archive-keyring.gpg > /dev/null
 
 # Correctly add the Gazebo repository
 RUN echo "deb [signed-by=/usr/share/keyrings/gazebo-archive-keyring.gpg] https://packages.osrfoundation.org/gazebo/ubuntu $(lsb_release -cs) main" \
-    | tee /etc/apt/sources.list.d/gazebo-stable.list
+    | tee /etc/apt/sources.list.d/gazebo-stable.list > /dev/null
 
 # Ensure the repository is recognized
 RUN apt update
