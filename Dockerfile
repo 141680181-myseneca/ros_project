@@ -20,10 +20,10 @@ RUN apt-get update && apt-get install -y \
     libprotobuf-dev protobuf-compiler \
     libboost-all-dev
 
-# Add the OSRF repository for Gazebo (Fixed for Ubuntu 24.04)
+# Add the OSRF repository for Gazebo (Correct Method for Ubuntu 24.04)
 RUN mkdir -p /etc/apt/keyrings && \
-    curl -fsSL http://packages.osrfoundation.org/gazebo/gazebo-archive-keyring.gpg | tee /etc/apt/keyrings/gazebo-archive-keyring.gpg > /dev/null && \
-    echo "deb [signed-by=/etc/apt/keyrings/gazebo-archive-keyring.gpg] http://packages.osrfoundation.org/gazebo/ubuntu-stable $(lsb_release -cs) main" | tee /etc/apt/sources.list.d/gazebo-stable.list > /dev/null && \
+    curl -fsSL http://packages.osrfoundation.org/gazebo/gazebo-archive-keyring.gpg | gpg --dearmor -o /etc/apt/keyrings/gazebo-archive-keyring.gpg && \
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/gazebo-archive-keyring.gpg] http://packages.osrfoundation.org/gazebo/ubuntu-stable $(lsb_release -cs) main" | tee /etc/apt/sources.list.d/gazebo-stable.list && \
     apt-get update && apt-get install -y gazebo11
 
 # Source ROS 2 environment
