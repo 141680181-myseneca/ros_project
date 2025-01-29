@@ -5,7 +5,7 @@ FROM osrf/ros:jazzy-desktop-full
 WORKDIR /ros2_ws
 
 # Install system dependencies
-RUN apt update && apt install -y \
+RUN apt-get update && apt-get install -y \
     software-properties-common \
     python3-colcon-common-extensions \
     curl \
@@ -13,9 +13,12 @@ RUN apt update && apt install -y \
     gnupg2 \
     wget
 
-# Install Gazebo from the official repositories
-RUN apt update && apt install -y \
-    gazebo11
+# Add the official Gazebo repository
+RUN sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -sc` main" > /etc/apt/sources.list.d/gazebo-stable.list'
+RUN wget https://packages.osrfoundation.org/gazebo.key -O - | apt-key add -
+
+# Update package lists and install Gazebo
+RUN apt-get update && apt-get install -y gazebo11
 
 # Source ROS 2 environment
 RUN echo "source /opt/ros/jazzy/setup.bash" >> ~/.bashrc
