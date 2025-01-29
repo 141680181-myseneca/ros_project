@@ -13,14 +13,13 @@ RUN apt update && apt install -y \
     gnupg2 \
     wget
 
-# Manually add Gazebo Garden repository and key
-RUN wget -qO - https://packages.osrfoundation.org/gazebo/gpg.key | gpg --dearmor -o /usr/share/keyrings/gazebo-keyring.gpg
-RUN echo "deb [signed-by=/usr/share/keyrings/gazebo-keyring.gpg] http://packages.osrfoundation.org/gazebo/ubuntu $(lsb_release -cs) main" \
+# Add Gazebo Garden repository (without broken GPG key)
+RUN echo "deb http://packages.osrfoundation.org/gazebo/ubuntu $(lsb_release -cs) main" \
     | tee /etc/apt/sources.list.d/gazebo-stable.list > /dev/null
-RUN apt update
 
-# Install Gazebo Garden manually
-RUN apt install -y gz-garden
+# Update package lists and install Gazebo Garden
+RUN apt update --allow-insecure-repositories && \
+    apt install -y gz-garden
 
 # Source ROS 2 environment
 RUN echo "source /opt/ros/jazzy/setup.bash" >> ~/.bashrc
