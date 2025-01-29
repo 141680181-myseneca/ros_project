@@ -19,10 +19,11 @@ RUN apt-get update && apt-get install -y \
     gnupg2 \
     wget
 
-# Add the OSRF repository and install Gazebo
-RUN sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -sc` main" > /etc/apt/sources.list.d/gazebo-stable.list' \
+# Add the OSRF repository manually (force Ubuntu 22.04 'jammy' instead of 'noble')
+RUN echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable jammy main" > /etc/apt/sources.list.d/gazebo-stable.list \
     && curl -s http://packages.osrfoundation.org/gazebo.key | apt-key add - \
-    && apt-get update && apt-get install -y gazebo11
+    && apt-get update \
+    && apt-get install -y gazebo11
 
 # # Install Gazebo from the OSRF repository
 # RUN apt-get install -y gazebo11 || apt-get install -y gazebo9
