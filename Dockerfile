@@ -21,7 +21,7 @@ RUN apt-get update && apt-get install -y \
     libboost-all-dev
 
 # Download and add the Gazebo OSRF repository key securely
-RUN curl -fsSL https://packages.osrfoundation.org/gazebo.key -o /usr/share/keyrings/gazebo-archive-keyring.gpg
+RUN curl -fsSL https://packages.osrfoundation.org/gazebo.key | gpg --dearmor > /usr/share/keyrings/gazebo-archive-keyring.gpg
 
 # Add the OSRF repository for Gazebo securely
 RUN echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/gazebo-archive-keyring.gpg] https://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -sc` main" > /etc/apt/sources.list.d/gazebo-stable.list && \
