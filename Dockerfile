@@ -4,11 +4,12 @@ FROM osrf/ros:jazzy-desktop-full
 # Set up the working directory
 WORKDIR /ros2_ws
 
-# Install dependencies
+# Install system dependencies
 RUN apt update && apt install -y \
     python3-colcon-common-extensions \
     gz-garden \
-    ros-jazzy-gz-sim-ros2
+    ros-jazzy-gz-ros2-control \
+    ros-jazzy-gz-ros2-sim
 
 # Source ROS 2 environment
 RUN echo "source /opt/ros/jazzy/setup.bash" >> ~/.bashrc
