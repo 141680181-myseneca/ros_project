@@ -19,11 +19,14 @@ RUN apt-get update && apt-get install -y \
     libprotobuf-dev protobuf-compiler \
     libboost-all-dev
 
-# Add the OSRF repository for Gazebo using secure HTTPS
+# Add the GPG key for the packages.osrfoundation.org repository securely
 RUN apt-get update && apt-get install -y wget lsb-release gnupg2 \
+    && wget -O - https://packages.osrfoundation.org/gazebo.key | apt-key add - \
     && sh -c 'echo "deb https://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -sc` main" > /etc/apt/sources.list.d/gazebo-stable.list' \
-    && wget https://packages.osrfoundation.org/gazebo.key -O - | apt-key add - \
-    && apt-get update && apt-get install -y gazebo11
+    && apt-get update
+
+# Install Gazebo using the added repository
+RUN apt-get install -y gazebo11
 
 # Install ROS 2 Gazebo packages
 RUN apt-get update && apt-get install -y ros-jazzy-gazebo-ros-pkgs
