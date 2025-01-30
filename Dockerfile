@@ -4,21 +4,45 @@ FROM osrf/ros:jazzy-desktop
 # Set noninteractive installation mode
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Update and install system utilities
+# Install system dependencies required for Gazebo and ROS 2
 RUN apt-get update && apt-get install -y \
+    software-properties-common \
+    python3-colcon-common-extensions \
     curl \
     lsb-release \
-    gnupg2
+    build-essential \
+    cmake \
+    git \
+    gnupg2 \
+    wget \
+    pkg-config \
+    libeigen3-dev \
+    libprotobuf-dev protobuf-compiler \
+    libboost-all-dev
 
-# Add the OSRF Gazebo repository
-RUN sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -sc` main" > /etc/apt/sources.list.d/gazebo-stable.list' && \
-    curl -s http://packages.osrfoundation.org/gazebo.key | apt-key add -
-
-# Install Gazebo Harmonic specifically
-RUN apt-get update && apt-get install -y gazebo-harmonic
+# Add the OSRF repository for Gazebo
+RUN sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -sc` main" > /etc/apt/sources.list.d/gazebo-stable.list' \
+    && curl -s http://packages.osrfoundation.org/gazebo.key | apt-key add - \
+    && apt-get update && apt-get install -y gazebo11
 
 # Source ROS 2 environment
 RUN echo "source /opt/ros/jazzy/setup.bash" >> ~/.bashrc
 
-# Set up entrypoint to simply run bash to allow for interactive troubleshooting
-CMD ["bash"]
+# Create a workspace for your ROS 2 package
+RUN mkdir -p /root/dev_ws/src
+WORKDIR /root/dev_ws
+
+# Copy the ROS 2 package source code
+COPY ./src ./src
+
+# Install missing dependencies using rosdep
+RUN . /opt/ros/jazzy/setup.bash \
+    && rosdep update \
+    && rosdep install --from-paths src --ignore-src -r -y \
+    && colcon build
+
+# Install Gazebo packages for ROS Jazzy
+RUN apt-get install -y ros-jazzy-gazebo-ros-pkgs
+
+# Set up entrypoint to start the robot controller
+CMD ["bash", "-c", "source /root/dev_ws/install/setup.bash && ros2 run my_robot_controller move_robot"]
