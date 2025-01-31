@@ -8,7 +8,8 @@ ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get upgrade -y && apt-get install -y \
     software-properties-common \
     python3 \
-    python3-pip \  
+    python3-pip \
+    python3-venv \
     python3-colcon-common-extensions \
     curl \
     lsb-release \
@@ -40,13 +41,28 @@ RUN /bin/bash -c "source /opt/ros/jazzy/setup.bash && \
     rosdep install --from-paths src --ignore-src -r -y && \
     colcon build --symlink-install && \
     source install/setup.bash && \
-    chmod +x /root/dev_ws/src/my_robot_controller/my_robot_controller/move_robot.py && \
-    pip install --break-system-packages --no-deps /root/dev_ws/src/my_robot_controller && \
+
+    # Verify colcon build output
+    echo 'Verifying colcon build output...' && \
+    if [ ! -d \"/root/dev_ws/install/my_robot_controller\" ]; then \
+      echo 'ERROR: colcon build failed, package not installed!'; \
+      exit 1; \
+    fi && \
+
+    chmod +x /root/dev_ws/install/my_robot_controller/bin/move_robot && \
+    python3 -m pip install --break-system-packages --no-deps /root/dev_ws/src/my_robot_controller && \
     ls -al /root/dev_ws/install/my_robot_controller/bin/ && \
     ls -al /root/dev_ws/install/my_robot_controller/lib/my_robot_controller/"
 
 # Verify executables
 RUN ls -al /root/dev_ws/install/my_robot_controller/bin/
 
-# Ensure the ROS 2 environment setup file is sourced before executing any ROS 2 command
-CMD ["bash", "-c", "source /root/dev_ws/install/setup.bash && ros2 run my_robot_controller move_robot"]
+# Copy the entrypoint script
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+# Set entrypoint
+ENTRYPOINT ["/entrypoint.sh"]
+
+# Default command to run the node
+CMD ["ros2", "run", "my_robot_controller", "move_robot"]
