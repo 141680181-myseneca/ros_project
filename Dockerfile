@@ -29,14 +29,15 @@ WORKDIR /root/dev_ws
 # Copy the ROS 2 package source code
 COPY ./src/my_robot_controller /root/dev_ws/src/my_robot_controller
 
-# Install missing dependencies, build the package, and list the directory
+# Install missing dependencies, build the package, and list directories for debugging
 RUN /bin/bash -c "source /opt/ros/jazzy/setup.bash && \
     rosdep update && \
     rosdep install --from-paths src --ignore-src -r -y && \
-    colcon build && \
-    source /root/dev_ws/install/setup.bash && \
+    colcon build --event-handlers console_direct+ && \
+    source install/setup.bash && \
     echo 'Listing install directory:' && ls -al /root/dev_ws/install && \
-    echo 'Listing bin directory:' && ls -al /root/dev_ws/install/my_robot_controller/bin"
+    echo 'Listing bin directory:' && ls -al /root/dev_ws/install/my_robot_controller/bin && \
+    echo 'Listing package directory:' && ls -al /root/dev_ws/install/my_robot_controller"
 
 # Ensure the ROS 2 environment setup file is sourced before executing any ROS 2 command
 CMD ["bash", "-c", "source /root/dev_ws/install/setup.bash && ros2 run my_robot_controller move_robot"]
