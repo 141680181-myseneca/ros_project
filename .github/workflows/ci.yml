@@ -46,8 +46,8 @@ jobs:
           source /root/dev_ws/install/setup.bash && \
           echo 'Checking if my_robot_controller package is installed...'
           ros2 pkg list | grep my_robot_controller && \
-          echo 'Installing package manually (if missing)...'
-          pip install --break-system-packages --no-deps --force-reinstall /root/dev_ws/src/my_robot_controller && \
+          echo 'Making move_robot.py executable...'
+          chmod +x /root/dev_ws/src/my_robot_controller/my_robot_controller/move_robot.py && \
           echo 'Checking installed executables in bin/...'
           ls -al /root/dev_ws/install/my_robot_controller/bin/ && \
           echo 'Checking installed package in site-packages/...'
@@ -60,5 +60,5 @@ jobs:
           echo \$PATH && \
           echo 'Trying to run move_robot manually...'
           /root/dev_ws/install/my_robot_controller/bin/move_robot || echo 'ERROR: move_robot failed manually' && \          
-          echo 'Running move_robot node (with timeout)...' && \      
+          echo 'Running move_robot node (with timeout)...'        
           timeout 5s ros2 run my_robot_controller move_robot || echo 'ERROR: move_robot failed to execute'"
