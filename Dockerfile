@@ -44,8 +44,8 @@ COPY ./src/my_robot_controller /root/dev_ws/src/my_robot_controller
 # Install missing dependencies using rosdep
 RUN . /opt/ros/jazzy/setup.bash \
     && rosdep update \
-    && rosdep install --from-paths src --ignore-src -r -y \
+    and rosdep install --from-paths src --ignore-src -r -y \
     && colcon build
 
 # Set up entrypoint to start the robot controller
-CMD ["bash", "-c", "source /root/dev_ws/install/setup.bash and ros2 run my_robot_controller move_robot"]
+CMD ["bash", "-c", "source /root/dev_ws/install/setup.bash && ros2 run my_robot_controller move_robot"]
