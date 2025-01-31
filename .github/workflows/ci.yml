@@ -28,7 +28,7 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: your-dockerhub-username/project1_ros2:latest  # Modify accordingly
+          tags: tangbr/project1_ros2:latest  # Modify accordingly
 
   test-container:
     needs: build-and-push
@@ -37,5 +37,5 @@ jobs:
     steps:
       - name: Pull and Run the Docker Container
         run: |
-          docker pull your-dockerhub-username/project1_ros2:latest
-          docker run --rm your-dockerhub-username/project1_ros2
+          docker pull tangbr/project1_ros2:latest
+          docker run --rm tangbr/project1_ros2
