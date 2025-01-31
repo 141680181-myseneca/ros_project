@@ -37,8 +37,9 @@ RUN ls -R /root/dev_ws/src/my_robot_controller
 
 # Clean and Rebuild the ROS 2 Package
 RUN /bin/bash -c "source /opt/ros/jazzy/setup.bash && \
-    colcon clean && \
+    echo 'Cleaning previous build files...' && \
     rm -rf build install log && \
+    echo 'Building the workspace from scratch...' && \
     colcon build --symlink-install && \
     source install/setup.bash"
 
