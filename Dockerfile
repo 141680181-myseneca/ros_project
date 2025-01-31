@@ -35,6 +35,13 @@ COPY src /root/dev_ws/src
 # Verify package directory structure
 RUN ls -R /root/dev_ws/src/my_robot_controller
 
+# Clean and Rebuild the ROS 2 Package
+RUN /bin/bash -c "source /opt/ros/jazzy/setup.bash && \
+    colcon clean && \
+    rm -rf build install log && \
+    colcon build --symlink-install && \
+    source install/setup.bash"
+
 # Install missing dependencies, build the package, and ensure scripts are executable
 RUN /bin/bash -c "source /opt/ros/jazzy/setup.bash && \
     rosdep update && \
@@ -50,6 +57,7 @@ RUN /bin/bash -c "source /opt/ros/jazzy/setup.bash && \
     chmod +x /root/dev_ws/install/my_robot_controller/bin/move_robot && \
     python3 -m pip install --break-system-packages --no-deps /root/dev_ws/src/my_robot_controller && \
     ls -al /root/dev_ws/install/my_robot_controller/bin/ && \
+    echo 'Making move_robot.py executable...' && \
     ls -al /root/dev_ws/install/my_robot_controller/lib/my_robot_controller/"
 
 # Verify executables

@@ -1,4 +1,4 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 import os
 from glob import glob
 
@@ -7,14 +7,13 @@ package_name = 'my_robot_controller'
 setup(
     name=package_name,
     version='0.0.1',
-    packages=[package_name],  # Explicitly specify the package
+    packages=find_packages(),  # Automatically finds and installs all modules
     data_files=[
         ('share/ament_index/resource_index/packages', ['package.xml']),
         ('share/' + package_name, ['package.xml']),
-        ('lib/' + package_name, glob('my_robot_controller/*.py')),  # Install scripts in ROS 2 expected path
     ],
     install_requires=['setuptools'],
-    zip_safe=True,
+    zip_safe=False,  # Ensures files are extracted for ROS 2 execution
     maintainer='Xiao Ming Tang',
     maintainer_email='xmtang1@myseneca.ca',
     description='A simple robot controller for ROS 2.',
