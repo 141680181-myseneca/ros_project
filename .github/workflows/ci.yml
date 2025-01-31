@@ -1,17 +1,18 @@
-name: ROS 2 Docker Build and Push
+name: ROS 2 CI/CD Pipeline
 
 on:
   push:
     branches:
-      - project_ros_gaz  # Runs the workflow when code is pushed to this branch
+      - main  # Runs on pushes to the main branch
+  pull_request:
 
 jobs:
   build-and-push:
-    runs-on: ubuntu-24.04  # Specifies the use of Ubuntu 24.04 for the runner
+    runs-on: ubuntu-24.04  # Ensures the latest Ubuntu with Docker support
 
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set Up Docker Buildx
         uses: docker/setup-buildx-action@v2
@@ -32,57 +33,98 @@ jobs:
 
   test-container:
     needs: build-and-push
-    runs-on: ubuntu-latest  # Ensure Docker is available by default
+    runs-on: ubuntu-latest  # Ensures Docker is available
 
     steps:
       - name: Pull and Run the Docker Container
         run: |
+          echo "Pulling the latest Docker image..."
           docker pull tangbr/project1_ros2:latest
-          timeout 10s docker run --rm --name test_ros_container tangbr/project1_ros2 /bin/bash -c '
-          
+
+          echo "Starting the test container..."
+          docker run --rm --name test_ros_container tangbr/project1_ros2 /bin/bash -c '
+          set -e  # Exit on error
+
           echo "Setting up ROS environment..."
           source /opt/ros/jazzy/setup.bash && \
-          source /root/dev_ws/install/setup.bash && \
+          source /root/dev_ws/install/setup.bash
 
           echo "Verifying package structure..."
-          ls -al /root/dev_ws/src/my_robot_controller && \
+          ls -al /root/dev_ws/src/my_robot_controller
 
           echo "Checking if my_robot_controller package is installed..."
-          ros2 pkg list | grep my_robot_controller || echo "ERROR: my_robot_controller package not found" && \
+          ros2 pkg list | grep my_robot_controller || { echo "ERROR: my_robot_controller package not found"; exit 1; }
 
-          # Verify colcon build output before proceeding
           echo "Verifying colcon build output..."
           if [ ! -d /root/dev_ws/install/my_robot_controller ]; then
-            echo "ERROR: colcon build failed, package not installed!";
-            exit 1;
-          fi && \
+            echo "ERROR: colcon build failed, package not installed!"
+            exit 1
+          fi
 
           echo "Making move_robot.py executable..."
-          chmod +x /root/dev_ws/install/my_robot_controller/bin/move_robot && \
+          chmod +x /root/dev_ws/install/my_robot_controller/bin/move_robot
 
           echo "Checking installed executables in bin/..."
-          ls -al /root/dev_ws/install/my_robot_controller/bin/ && \
+          ls -al /root/dev_ws/install/my_robot_controller/bin/
 
           echo "Checking installed package in site-packages/..."
-          ls -al /root/dev_ws/install/my_robot_controller/lib/python*/site-packages/ && \
+          ls -al /root/dev_ws/install/my_robot_controller/lib/python*/site-packages/
 
           echo "Checking installed ROS 2 executables..."
-          ls -al /root/dev_ws/install/my_robot_controller/lib/my_robot_controller/ || echo "WARNING: No executables found in expected location" && \
+          if [ -d "/root/dev_ws/install/my_robot_controller/lib/my_robot_controller/" ]; then
+            ls -al /root/dev_ws/install/my_robot_controller/lib/my_robot_controller/
+          else
+            echo "WARNING: No executables found in expected location"
+          fi
 
           echo "Verifying AMENT_PREFIX_PATH..."
-          echo $AMENT_PREFIX_PATH && \
+          echo $AMENT_PREFIX_PATH
 
           echo "Manually adding package to PATH..."
-          export PATH=$PATH:/root/dev_ws/install/my_robot_controller/bin && \
+          export PATH=$PATH:/root/dev_ws/install/my_robot_controller/bin
 
           echo "Rechecking PATH variable..."
-          echo $PATH && \
+          echo $PATH
 
           echo "Trying to run move_robot manually..."
-          /root/dev_ws/install/my_robot_controller/bin/move_robot || echo "ERROR: move_robot failed manually" && \
+          /root/dev_ws/install/my_robot_controller/bin/move_robot || { echo "ERROR: move_robot failed manually"; exit 1; }
 
           echo "Running move_robot node (with timeout)..."
-          source /opt/ros/jazzy/setup.bash && \
-          source /root/dev_ws/install/setup.bash && \
-          timeout 5s ros2 run my_robot_controller move_robot || echo "ERROR: move_robot failed to execute"
+          timeout 5s ros2 run my_robot_controller move_robot || { echo "ERROR: move_robot failed to execute"; exit 1; }
           '
+
+  final-ci:
+    needs: test-container
+    runs-on: ubuntu-latest
+    container: tangbr/project1_ros2:latest  # Run tests inside the container
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up ROS environment
+        run: |
+          source /opt/ros/jazzy/setup.bash
+          source install/setup.bash
+
+      - name: Verify Installation
+        run: |
+          echo "Checking if move_robot exists..."
+          if ! ros2 pkg executables | grep -q my_robot_controller; then
+            echo "ERROR: move_robot executable not found! Forcing reinstall..."
+            python3 -m pip install --no-cache-dir --no-deps /root/dev_ws/src/my_robot_controller
+            ros2 pkg executables | grep my_robot_controller
+          else
+            echo "✅ move_robot found!"
+          fi
+
+      - name: Run Final Test
+        run: |
+          echo "Starting move_robot node..."
+          if ! ros2 run my_robot_controller move_robot; then
+            echo "ERROR: move_robot execution failed! Checking dependencies..."
+            ros2 run my_robot_controller move_robot --ros-args --log-level debug
+            exit 1
+          else
+            echo "🎉 move_robot executed successfully!"
+          fi
