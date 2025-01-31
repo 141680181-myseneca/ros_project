@@ -35,8 +35,10 @@ jobs:
     runs-on: ubuntu-24.04  # Consistently use Ubuntu 24.04 here too for testing
 
     steps:
-      - name: Set Up Docker
-        uses: docker/setup-buildx-action@v2  # Ensures Docker is installed for testing
+      - name: Install Docker (Fix Missing Docker Issue)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y docker.io
 
       - name: Pull and Run the Docker Container
         run: |
