@@ -35,18 +35,24 @@ jobs:
     runs-on: ubuntu-24.04  # Consistently use Ubuntu 24.04 here too for testing
 
     steps:
-      - name: Pull and Run the Docker Container
-        run: |
-          docker pull tangbr/project1_ros2:latest
-          docker run --rm --name test_ros_container tangbr/project1_ros2 /bin/bash -c "
-          echo 'Verifying package structure...'
-          ls -al /root/dev_ws/src/my_robot_controller && \
-          echo 'Setting up ROS environment...'
-          source /opt/ros/jazzy/setup.bash && \
-          source /root/dev_ws/install/setup.bash && \
-          echo 'Ensuring move_robot.py is executable...'
-          chmod +x /root/dev_ws/src/my_robot_controller/my_robot_controller/move_robot.py && \
-          echo 'Checking if my_robot_controller package is installed...'
-          ls -al /root/dev_ws/install/my_robot_controller/lib/my_robot_controller/ && \  
-          echo 'Running move_robot node...'
-          ros2 run my_robot_controller move_robot"
+    - name: Pull and Run the Docker Container
+      run: |
+        docker pull tangbr/project1_ros2:latest
+        docker run --rm --name test_ros_container tangbr/project1_ros2 /bin/bash -c "
+        echo 'Verifying package structure...'
+        ls -al /root/dev_ws/src/my_robot_controller && \
+        echo 'Setting up ROS environment...'
+        source /opt/ros/jazzy/setup.bash && \
+        source /root/dev_ws/install/setup.bash && \
+        echo 'Ensuring move_robot.py is executable...'
+        chmod +x /root/dev_ws/src/my_robot_controller/my_robot_controller/move_robot.py && \
+        echo 'Checking if my_robot_controller package is installed...'
+        ros2 pkg list | grep my_robot_controller && \
+        echo 'Checking installed executable...'
+        ls -al /root/dev_ws/install/my_robot_controller/lib/my_robot_controller/ && \
+        echo 'Installing package manually (if missing)...'
+        pip install --no-deps /root/dev_ws/install/my_robot_controller && \
+        echo 'Re-checking installed executable...'
+        ls -al /root/dev_ws/install/my_robot_controller/lib/my_robot_controller/ && \
+        echo 'Running move_robot node...'
+        ros2 run my_robot_controller move_robot"
