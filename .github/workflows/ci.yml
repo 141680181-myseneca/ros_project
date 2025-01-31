@@ -32,16 +32,17 @@ jobs:
 
   test-container:
     needs: build-and-push
-    runs-on: ubuntu-24.04  # Consistently use Ubuntu 24.04 here too for testing
+    # runs-on: ubuntu-24.04  # Consistently use Ubuntu 24.04 here too for testing
+    runs-on: ubuntu-latest  # Ensure Docker is available by default
 
     steps:
-      - name: Install Docker Manually (Fix Unmet Dependencies)
-        run: |
-          sudo apt-get update
-          curl -fsSL https://get.docker.com | sudo sh
-          sudo systemctl start docker
-          sudo systemctl enable docker
-          sudo usermod -aG docker $USER
+      # - name: Install Docker Manually (Fix Unmet Dependencies)
+      #   run: |
+      #     sudo apt-get update
+      #     curl -fsSL https://get.docker.com | sudo sh
+      #     sudo systemctl start docker
+      #     sudo systemctl enable docker
+      #     sudo usermod -aG docker $USER
 
       - name: Pull and Run the Docker Container
         run: |
