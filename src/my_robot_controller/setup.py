@@ -7,13 +7,13 @@ package_name = 'my_robot_controller'
 setup(
     name=package_name,
     version='0.0.1',
-    packages=find_packages(),  # Finds all submodules automatically
-    package_dir={'': 'src'},  # Ensure correct package structure
+    packages=find_packages(where='src'),  # Ensures correct package discovery
+    package_dir={'': 'src'},  # Correctly maps the package structure
     data_files=[
         ('share/ament_index/resource_index/packages', ['package.xml']),
         ('share/' + package_name, ['package.xml']),
-        ('lib/' + package_name, glob('my_robot_controller/*.py')),  # Install scripts in ROS 2 expected path
-        ('lib/' + package_name, glob('launch/*.launch.py')),  # Ensure launch files are installed if any
+        ('lib/' + package_name, glob('src/my_robot_controller/*.py')),  # Correct package path
+        ('lib/' + package_name, glob('launch/*.launch.py')),  # Ensure launch files are included
         ('share/' + package_name + '/config', glob('config/*.yaml')),  # Ensure config files are included
     ],
     install_requires=['setuptools'],
@@ -25,7 +25,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'move_robot = my_robot_controller.move_robot:main'  # Ensure script is properly registered
+            'move_robot = my_robot_controller.move_robot:main'  # Ensures script is properly registered
         ],
     },
 )

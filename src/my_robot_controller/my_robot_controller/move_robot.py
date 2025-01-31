@@ -24,7 +24,6 @@ def main(args=None):
         start_time = time.time()
         while rclpy.ok():
             rclpy.spin_once(node)
-            # Automatically exit after 5 seconds
             if time.time() - start_time > 5:
                 node.get_logger().info("Shutting down after timeout...")
                 break
@@ -33,5 +32,6 @@ def main(args=None):
     finally:
         node.destroy_node()
         rclpy.shutdown()
+
 if __name__ == '__main__':
     main()

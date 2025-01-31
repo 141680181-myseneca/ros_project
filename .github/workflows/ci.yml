@@ -45,17 +45,20 @@ jobs:
           source /root/dev_ws/install/setup.bash
 
           echo "Verifying package structure..."
-          ls -R /root/dev_ws/src/my_robot_controller || { echo "ERROR: Package directory missing!"; exit 1; }
+          ls -R /root/dev_ws/src/my_robot_controller || { echo "❌ ERROR: Package directory missing!"; exit 1; }
 
           echo "Checking if my_robot_controller package is installed..."
-          ros2 pkg list | grep my_robot_controller || { echo "ERROR: Package not found in ROS 2!"; exit 1; }
+          ros2 pkg list | grep my_robot_controller || { echo "❌ ERROR: Package not found in ROS 2!"; exit 1; }
 
           echo "Checking package contents before build..."
-          ls -R /root/dev_ws/src/my_robot_controller/
+          ls -R /root/dev_ws/src/my_robot_controller/my_robot_controller || { echo "❌ ERROR: Python package not found!"; exit 1; }
+
+          echo "🔨 Fixing Python Path before build..."
+          export PYTHONPATH=$PYTHONPATH:/root/dev_ws/src/my_robot_controller
 
           echo "Verifying colcon build output..."
           if [ ! -d /root/dev_ws/install/my_robot_controller ]; then
-            echo "ERROR: colcon build failed, package not installed!";
+            echo "❌ ERROR: colcon build failed, package not installed!";
             exit 1;
           fi
 
@@ -63,7 +66,7 @@ jobs:
           chmod +x /root/dev_ws/install/my_robot_controller/bin/move_robot
 
           echo "Checking installed executables in bin/..."
-          ls -al /root/dev_ws/install/my_robot_controller/bin/ || { echo "ERROR: No executables found!"; exit 1; }
+          ls -al /root/dev_ws/install/my_robot_controller/bin/ || { echo "❌ ERROR: No executables found!"; exit 1; }
 
           echo "Checking installed package in site-packages/..."
           ls -al /root/dev_ws/install/my_robot_controller/lib/python*/site-packages/
@@ -72,7 +75,7 @@ jobs:
           if [ -d "/root/dev_ws/install/my_robot_controller/lib/my_robot_controller/" ]; then
             ls -al /root/dev_ws/install/my_robot_controller/lib/my_robot_controller/
           else
-            echo "WARNING: No executables found in expected location"
+            echo "⚠️ WARNING: No executables found in expected location"
           fi
 
           echo "Verifying AMENT_PREFIX_PATH..."
@@ -85,10 +88,10 @@ jobs:
           echo $PATH
 
           echo "Trying to run move_robot manually..."
-          /root/dev_ws/install/my_robot_controller/bin/move_robot || { echo "ERROR: move_robot failed manually"; exit 1; }
+          /root/dev_ws/install/my_robot_controller/bin/move_robot || { echo "❌ ERROR: move_robot failed manually"; exit 1; }
 
           echo "Running move_robot node (with timeout)..."
           source /opt/ros/jazzy/setup.bash && \
           source /root/dev_ws/install/setup.bash && \
-          timeout 5s ros2 run my_robot_controller move_robot || { echo "ERROR: move_robot failed to execute"; exit 1; }
+          timeout 5s ros2 run my_robot_controller move_robot || { echo "❌ ERROR: move_robot failed to execute"; exit 1; }
           '
