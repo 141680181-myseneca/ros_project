@@ -41,14 +41,12 @@ RUN /bin/bash -c "source /opt/ros/jazzy/setup.bash && \
     rosdep install --from-paths src --ignore-src -r -y && \
     colcon build --symlink-install && \
     source install/setup.bash && \
-
     # Verify colcon build output
     echo 'Verifying colcon build output...' && \
     if [ ! -d \"/root/dev_ws/install/my_robot_controller\" ]; then \
       echo 'ERROR: colcon build failed, package not installed!'; \
       exit 1; \
     fi && \
-
     chmod +x /root/dev_ws/install/my_robot_controller/bin/move_robot && \
     python3 -m pip install --break-system-packages --no-deps /root/dev_ws/src/my_robot_controller && \
     ls -al /root/dev_ws/install/my_robot_controller/bin/ && \
