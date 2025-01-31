@@ -43,7 +43,8 @@ RUN /bin/bash -c "source /opt/ros/jazzy/setup.bash && \
 
 # Verify package installation
 RUN ls -al /root/dev_ws/install/my_robot_controller/
-RUN ls -al /root/dev_ws/install/my_robot_controller/lib/my_robot_controller/
-
+RUN ls -al /root/dev_ws/install/my_robot_controller/lib/
+RUN ls -al /root/dev_ws/install/my_robot_controller/bin/  # Check for the installed executable
+RUN ls -al /root/dev_ws/install/my_robot_controller/lib/python*/site-packages/  # Check Python packages
 # Ensure the ROS 2 environment setup file is sourced before executing any ROS 2 command
 CMD ["bash", "-c", "source /root/dev_ws/install/setup.bash && ros2 run my_robot_controller move_robot"]
