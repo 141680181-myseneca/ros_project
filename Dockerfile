@@ -5,7 +5,7 @@ FROM osrf/ros:jazzy-desktop
 ENV DEBIAN_FRONTEND=noninteractive
 
 # Install system dependencies
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && apt-get upgrade -y && apt-get install -y \
     software-properties-common \
     python3-colcon-common-extensions \
     curl \
@@ -19,14 +19,11 @@ RUN apt-get update && apt-get install -y \
     libprotobuf-dev protobuf-compiler \
     libboost-all-dev
 
-# Add the GPG key for the packages.osrfoundation.org repository securely
-RUN apt-get update && apt-get install -y wget lsb-release gnupg2 \
+# Add the repository and install Gazebo
+RUN echo "deb https://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -sc` main" > /etc/apt/sources.list.d/gazebo-stable.list \
     && wget -O - https://packages.osrfoundation.org/gazebo.key | apt-key add - \
-    && sh -c 'echo "deb https://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -sc` main" > /etc/apt/sources.list.d/gazebo-stable.list' \
-    && apt-get update
-
-# Install Gazebo using the added repository
-RUN apt-get install -y gazebo11
+    && apt-get update \
+    && apt-get install -y gazebo11
 
 # Install ROS 2 Gazebo packages
 RUN apt-get update && apt-get install -y ros-jazzy-gazebo-ros-pkgs
@@ -44,7 +41,7 @@ COPY ./src/my_robot_controller /root/dev_ws/src/my_robot_controller
 # Install missing dependencies using rosdep
 RUN . /opt/ros/jazzy/setup.bash \
     && rosdep update \
-    and rosdep install --from-paths src --ignore-src -r -y \
+    && rosdep install --from-paths src --ignore-src -r -y \
     && colcon build
 
 # Set up entrypoint to start the robot controller
