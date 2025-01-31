@@ -86,11 +86,21 @@ jobs:
           echo "Rechecking PATH variable..."
           echo $PATH
 
+          # ✅ Debug move_robot Execution
+          echo "Checking if move_robot exists..."
+          ls -lah /root/dev_ws/install/my_robot_controller/bin/
+          echo "Checking ROS 2 executables..."
+          ros2 pkg executables | grep my_robot_controller
+          echo "Reinstalling move_robot package..."
+          python3 -m pip install --no-cache-dir --no-deps /root/dev_ws/src/my_robot_controller
+          echo "Rechecking executables..."
+          ros2 pkg executables | grep my_robot_controller
+
           echo "Trying to run move_robot manually..."
           /root/dev_ws/install/my_robot_controller/bin/move_robot || { echo "ERROR: move_robot failed manually"; exit 1; }
 
           echo "Running move_robot node (with timeout)..."
-          timeout 5s ros2 run my_robot_controller move_robot || { echo "ERROR: move_robot failed to execute"; exit 1; }
+          timeout 5s ros2 run my_robot_controller move_robot --ros-args --log-level debug || { echo "ERROR: move_robot failed to execute"; exit 1; }
           '
 
   final-ci:
@@ -106,6 +116,18 @@ jobs:
         run: |
           source /opt/ros/jazzy/setup.bash
           source install/setup.bash
+
+      # ✅ Debug move_robot Execution Before Final Run
+      - name: Debug move_robot Execution
+        run: |
+          echo "Checking if move_robot exists..."
+          ls -lah /root/dev_ws/install/my_robot_controller/bin/
+          echo "Checking ROS 2 executables..."
+          ros2 pkg executables | grep my_robot_controller
+          echo "Reinstalling move_robot package..."
+          python3 -m pip install --no-cache-dir --no-deps /root/dev_ws/src/my_robot_controller
+          echo "Rechecking executables..."
+          ros2 pkg executables | grep my_robot_controller
 
       - name: Verify Installation
         run: |
