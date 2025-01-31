@@ -5,16 +5,21 @@ package_name = 'my_robot_controller'
 setup(
     name=package_name,
     version='0.0.1',
-    packages=[package_name],
+    packages=[package_name],  # This must match the inner `my_robot_controller/` directory
+    data_files=[
+        ('share/ament_index/resource_index/packages', ['package.xml']),
+        ('share/' + package_name, ['package.xml']),
+    ],
     install_requires=['setuptools'],
+    zip_safe=True,
     maintainer='Your Name',
-    maintainer_email='your.email@example.com',
-    description='A simple ROS 2 robot controller package.',
-    license='BSD-3-Clause',
+    maintainer_email='your-email@example.com',
+    description='A simple robot controller for ROS 2.',
+    license='BSD',
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'move_robot = my_robot_controller.move_robot:main'
+            'move_robot = my_robot_controller.move_robot:main'  # This must match move_robot.py
         ],
     },
 )
