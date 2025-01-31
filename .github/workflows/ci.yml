@@ -39,7 +39,6 @@ jobs:
         run: |
           docker pull tangbr/project1_ros2:latest
           timeout 10s docker run --rm --name test_ros_container tangbr/project1_ros2 /bin/bash -c "
-          docker run --rm --name test_ros_container tangbr/project1_ros2 /bin/bash -c "
           echo 'Verifying package structure...'
           ls -al /root/dev_ws/src/my_robot_controller && \
           echo 'Setting up ROS environment...'
@@ -61,5 +60,5 @@ jobs:
           echo \$PATH && \
           echo 'Trying to run move_robot manually...'
           /root/dev_ws/install/my_robot_controller/bin/move_robot || echo 'ERROR: move_robot failed manually' && \          
-          echo 'Running move_robot node (with timeout)...'          
+          echo 'Running move_robot node (with timeout)...' && \      
           timeout 5s ros2 run my_robot_controller move_robot || echo 'ERROR: move_robot failed to execute'"
