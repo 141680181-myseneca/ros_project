@@ -7,6 +7,8 @@ ENV DEBIAN_FRONTEND=noninteractive
 # Install system dependencies
 RUN apt-get update && apt-get upgrade -y && apt-get install -y \
     software-properties-common \
+    python3 \
+    python3-pip \  
     python3-colcon-common-extensions \
     curl \
     lsb-release \
