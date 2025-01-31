@@ -41,7 +41,9 @@ RUN /bin/bash -c "source /opt/ros/jazzy/setup.bash && \
     colcon build --symlink-install && \
     source install/setup.bash && \
     chmod +x /root/dev_ws/src/my_robot_controller/my_robot_controller/move_robot.py && \
-    pip install --break-system-packages --no-deps /root/dev_ws/install/my_robot_controller"
+    pip install --break-system-packages --no-deps /root/dev_ws/src/my_robot_controller && \
+    ls -al /root/dev_ws/install/my_robot_controller/bin/ && \
+    ls -al /root/dev_ws/install/my_robot_controller/lib/my_robot_controller/"
 
 # Verify executables
 RUN ls -al /root/dev_ws/install/my_robot_controller/bin/
