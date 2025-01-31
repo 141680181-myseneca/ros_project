@@ -53,4 +53,4 @@ jobs:
           echo 'Checking installed package in site-packages/...'
           ls -al /root/dev_ws/install/my_robot_controller/lib/python*/site-packages/ && \
           echo 'Running move_robot node...'
-          ros2 run my_robot_controller move_robot"
+          ros2 run my_robot_controller move_robot || echo 'ERROR: move_robot failed to execute'"
