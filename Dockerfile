@@ -63,7 +63,7 @@ RUN /bin/bash -c "source /opt/ros/jazzy/setup.bash && \
         ls -al /root/dev_ws/install/my_robot_controller/lib/my_robot_controller/; \
     else \
         echo 'WARNING: Directory /root/dev_ws/install/my_robot_controller/lib/my_robot_controller/ not found!'; \
-    fi
+    fi"
 
 
 # Verify executables
