@@ -38,6 +38,7 @@ jobs:
       - name: Pull and Run the Docker Container
         run: |
           docker pull tangbr/project1_ros2:latest
+          timeout 10s docker run --rm --name test_ros_container tangbr/project1_ros2 /bin/bash -c "
           docker run --rm --name test_ros_container tangbr/project1_ros2 /bin/bash -c "
           echo 'Verifying package structure...'
           ls -al /root/dev_ws/src/my_robot_controller && \

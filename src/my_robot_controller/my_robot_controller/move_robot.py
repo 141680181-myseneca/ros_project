@@ -2,6 +2,7 @@
 import rclpy
 from rclpy.node import Node
 from geometry_msgs.msg import Twist
+import time
 
 class RobotMover(Node):
     def __init__(self):
@@ -20,7 +21,13 @@ def main(args=None):
     rclpy.init(args=args)
     node = RobotMover()
     try:
-        rclpy.spin(node)
+        start_time = time.time()
+        while rclpy.ok():
+            rclpy.spin_once(node)
+            # Automatically exit after 5 seconds
+            if time.time() - start_time > 5:
+                node.get_logger().info("Shutting down after timeout...")
+                break
     except KeyboardInterrupt:
         pass
     finally:
