@@ -11,6 +11,8 @@ setup(
     data_files=[
         ('share/ament_index/resource_index/packages', ['package.xml']),
         ('share/' + package_name, ['package.xml']),
+        ('lib/python3/site-packages/' + package_name, glob('my_robot_controller/*.py')),  # Install scripts
+        ('lib/' + package_name, glob('my_robot_controller/*.py')),  # ROS 2 expected location
     ],
     install_requires=['setuptools'],
     zip_safe=False,  # Ensures files are extracted for ROS 2 execution
