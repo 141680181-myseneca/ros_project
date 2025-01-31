@@ -1,5 +1,5 @@
-# Use a ROS 2 base image that is compatible with an older Ubuntu version if necessary
-FROM osrf/ros:jazzy-desktop-full
+# Use a ROS 2 base image that is compatible with Ubuntu 24.04
+FROM osrf/ros:jazzy-desktop
 
 # Set noninteractive installation mode
 ENV DEBIAN_FRONTEND=noninteractive
@@ -29,11 +29,11 @@ WORKDIR /root/dev_ws
 # Copy the ROS 2 package source code
 COPY ./src/my_robot_controller /root/dev_ws/src/my_robot_controller
 
-# Install missing dependencies using rosdep
-RUN . /opt/ros/jazzy/setup.bash \
-    && rosdep update \
-    && rosdep install --from-paths src --ignore-src -r -y \
-    && colcon build
+# Install missing dependencies and build the package
+RUN /bin/bash -c "source /opt/ros/jazzy/setup.bash && \
+    rosdep update && \
+    rosdep install --from-paths src --ignore-src -r -y && \
+    colcon build"
 
 # Set up entrypoint to start the robot controller
 CMD ["bash", "-c", "source /root/dev_ws/install/setup.bash && ros2 run my_robot_controller move_robot"]
