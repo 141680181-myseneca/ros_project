@@ -56,6 +56,7 @@ RUN /bin/bash -c "source /opt/ros/jazzy/setup.bash && \
       exit 1; \
     fi && \
     chmod +x /root/dev_ws/install/my_robot_controller/bin/move_robot && \
+    source install/setup.bash && \  
     echo 'Checking ROS 2 recognized executables...' && \
     ros2 pkg executables | grep my_robot_controller || echo 'WARNING: move_robot not found in ROS 2 executables!' && \
     python3 -m pip install --break-system-packages --no-deps /root/dev_ws/src/my_robot_controller && \
