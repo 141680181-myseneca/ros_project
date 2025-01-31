@@ -7,10 +7,11 @@ setup(
     version='0.0.1',
     packages=[package_name],
     install_requires=['setuptools'],
-    maintainer='Xiao Ming Tang',
-    maintainer_email='xmtang1@myseneca.ca',
-    description='A simple ROS 2 robot controller package.',
-    license='BSD-3-Clause',
+    zip_safe=True,
+    maintainer='Your Name',
+    maintainer_email='your-email@example.com',
+    description='A simple ROS 2 robot controller.',
+    license='BSD',
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
