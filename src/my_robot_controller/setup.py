@@ -1,6 +1,5 @@
 from setuptools import setup, find_packages
-import os
-from glob import glob
+
 package_name = 'my_robot_controller'
 
 setup(

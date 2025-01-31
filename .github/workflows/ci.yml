@@ -47,6 +47,6 @@ jobs:
           echo 'Ensuring move_robot.py is executable...'
           chmod +x /root/dev_ws/src/my_robot_controller/my_robot_controller/move_robot.py && \
           echo 'Checking if my_robot_controller package is installed...'
-          ros2 pkg list | grep my_robot_controller && \
+          ls -al /root/dev_ws/install/my_robot_controller/lib/my_robot_controller/ && \  
           echo 'Running move_robot node...'
           ros2 run my_robot_controller move_robot"
