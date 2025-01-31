@@ -39,7 +39,7 @@ RUN /bin/bash -c "source /opt/ros/jazzy/setup.bash && \
     rosdep install --from-paths src --ignore-src -r -y && \
     colcon build --symlink-install && \
     source install/setup.bash && \
-    pip install --break-system-packages --no-deps /root/dev_ws/install/my_robot_controller
+    pip install --break-system-packages --no-deps /root/dev_ws/install/my_robot_controller"
     
 # Verify package installation
 RUN ls -al /root/dev_ws/install/my_robot_controller/
