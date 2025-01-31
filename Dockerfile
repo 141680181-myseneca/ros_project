@@ -33,7 +33,10 @@ WORKDIR /root/dev_ws
 COPY src /root/dev_ws/src
 
 # Verify package directory structure
-RUN ls -R /root/dev_ws/src/my_robot_controller
+RUN ls -R /root/dev_ws/src/
+
+# Fix permissions (optional)
+RUN chmod -R 755 /root/dev_ws/src
 
 # Clean and Rebuild the ROS 2 Package
 RUN /bin/bash -c "source /opt/ros/jazzy/setup.bash && \
