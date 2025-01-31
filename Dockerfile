@@ -7,7 +7,6 @@ ENV DEBIAN_FRONTEND=noninteractive
 # Install system dependencies
 RUN apt-get update && apt-get upgrade -y && apt-get install -y \
     software-properties-common \
-    python3-pip \
     python3-colcon-common-extensions \
     curl \
     lsb-release \
@@ -27,24 +26,23 @@ RUN echo "source /opt/ros/jazzy/setup.bash" >> ~/.bashrc
 RUN mkdir -p /root/dev_ws/src
 WORKDIR /root/dev_ws
 
-# Copy the ROS 2 package source code
-COPY src/my_robot_controller /root/dev_ws/src/my_robot_controller
+# Copy the entire src directory, maintaining your structure
+COPY src /root/dev_ws/src
 
-# List the directory structure to verify correct copying
-RUN ls -al /root/dev_ws/src/my_robot_controller
+# Verify package directory structure
+RUN ls -R /root/dev_ws/src/my_robot_controller
 
-# Install missing dependencies, build the package, and provide detailed directory listings for debugging
+# Install missing dependencies, build the package, and ensure scripts are executable
 RUN /bin/bash -c "source /opt/ros/jazzy/setup.bash && \
     rosdep update && \
     rosdep install --from-paths src --ignore-src -r -y && \
     colcon build --symlink-install && \
     source install/setup.bash && \
-    pip install --break-system-packages --no-deps /root/dev_ws/src/my_robot_controller"
+    chmod +x /root/dev_ws/src/my_robot_controller/my_robot_controller/move_robot.py && \
+    pip install --break-system-packages --no-deps /root/dev_ws/install/my_robot_controller"
 
-# Verify package installation
-RUN ls -al /root/dev_ws/install/my_robot_controller/
-RUN ls -al /root/dev_ws/install/my_robot_controller/lib/
-RUN ls -al /root/dev_ws/install/my_robot_controller/bin/  # Check for the installed executable
-RUN ls -al /root/dev_ws/install/my_robot_controller/lib/python*/site-packages/  # Check Python packages
+# Verify executables
+RUN ls -al /root/dev_ws/install/my_robot_controller/bin/
+
 # Ensure the ROS 2 environment setup file is sourced before executing any ROS 2 command
 CMD ["bash", "-c", "source /root/dev_ws/install/setup.bash && ros2 run my_robot_controller move_robot"]

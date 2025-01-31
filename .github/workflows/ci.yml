@@ -42,10 +42,10 @@ jobs:
           echo 'Setting up ROS environment...'
           source /opt/ros/jazzy/setup.bash && \
           source /root/dev_ws/install/setup.bash && \
-          
+
           echo 'Verifying package structure...'
           ls -al /root/dev_ws/src/my_robot_controller && \
-          
+
           echo 'Checking if my_robot_controller package is installed...'
           ros2 pkg list | grep my_robot_controller || echo 'ERROR: my_robot_controller package not found' && \
 
@@ -58,6 +58,9 @@ jobs:
           echo 'Checking installed package in site-packages/...'
           ls -al /root/dev_ws/install/my_robot_controller/lib/python*/site-packages/ && \
 
+          echo 'Checking installed ROS 2 executables...'
+          ls -al /root/dev_ws/install/my_robot_controller/lib/my_robot_controller/ || echo 'WARNING: No executables found in expected location' && \
+
           echo 'Verifying AMENT_PREFIX_PATH...'
           echo \$AMENT_PREFIX_PATH && \
 
@@ -66,9 +69,6 @@ jobs:
 
           echo 'Rechecking PATH variable...'
           echo \$PATH && \
-
-          echo 'Checking installed ROS 2 executables...'
-          ls -al /root/dev_ws/install/my_robot_controller/lib/my_robot_controller/ || echo 'WARNING: No executables found in expected location' && \
 
           echo 'Trying to run move_robot manually...'
           /root/dev_ws/install/my_robot_controller/bin/move_robot || echo 'ERROR: move_robot failed manually' && \
