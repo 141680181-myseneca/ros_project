@@ -34,9 +34,7 @@ RUN /bin/bash -c "source /opt/ros/jazzy/setup.bash && \
     rosdep update && \
     rosdep install --from-paths src --ignore-src -r -y && \
     colcon build && \
-    source install/setup.bash" \
-    echo 'Listing install directory:' && ls -al install && \
-    echo 'Listing bin directory:' && ls -al install/my_robot_controller/bin"
+    source install/setup.bash"
 
 # Ensure the ROS 2 environment setup file is sourced before executing any ROS 2 command
 CMD ["bash", "-c", "source /root/dev_ws/install/setup.bash && ros2 run my_robot_controller move_robot"]
