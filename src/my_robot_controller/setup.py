@@ -1,14 +1,17 @@
-from setuptools import setup, find_packages
+from setuptools import setup
+import os
+from glob import glob
 
 package_name = 'my_robot_controller'
 
 setup(
     name=package_name,
     version='0.0.1',
-    packages=find_packages(),  # Automatically finds the package inside src/my_robot_controller/
+    packages=[package_name],  # Explicitly install the package
     data_files=[
         ('share/ament_index/resource_index/packages', ['package.xml']),
         ('share/' + package_name, ['package.xml']),
+        ('lib/' + package_name, glob('my_robot_controller/*.py')),  # Ensure executables are in ROS 2 "lib" folder
     ],
     install_requires=['setuptools'],
     zip_safe=True,
