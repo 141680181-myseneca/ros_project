@@ -44,27 +44,28 @@ RUN /bin/bash -c "source /opt/ros/jazzy/setup.bash && \
     source install/setup.bash"
 
 # Install missing dependencies, build the package, and ensure scripts are executable
+# Build the package and ensure scripts are executable
 RUN /bin/bash -c "source /opt/ros/jazzy/setup.bash && \
     rosdep update && \
     rosdep install --from-paths src --ignore-src -r -y && \
-    colcon build --symlink-install && \
+    colcon build --symlink-install --packages-select my_robot_controller && \
     source install/setup.bash && \
-    # Verify colcon build output
     echo 'Verifying colcon build output...' && \
-    if [ ! -d \"/root/dev_ws/install/my_robot_controller\" ]; then \
+    if [ ! -d '/root/dev_ws/install/my_robot_controller' ]; then \
       echo 'ERROR: colcon build failed, package not installed!'; \
       exit 1; \
     fi && \
     chmod +x /root/dev_ws/install/my_robot_controller/bin/move_robot && \
+    echo 'Checking ROS 2 recognized executables...' && \
+    ros2 pkg executables | grep my_robot_controller || echo 'WARNING: move_robot not found in ROS 2 executables!' && \
     python3 -m pip install --break-system-packages --no-deps /root/dev_ws/src/my_robot_controller && \
     ls -al /root/dev_ws/install/my_robot_controller/bin/ && \
     echo 'Making move_robot.py executable...' && \
-    if [ -d "/root/dev_ws/install/my_robot_controller/lib/my_robot_controller/" ]; then \
+    if [ -d '/root/dev_ws/install/my_robot_controller/lib/my_robot_controller/' ]; then \
         ls -al /root/dev_ws/install/my_robot_controller/lib/my_robot_controller/; \
     else \
         echo 'WARNING: Directory /root/dev_ws/install/my_robot_controller/lib/my_robot_controller/ not found!'; \
     fi"
-
 
 # Verify executables
 RUN ls -al /root/dev_ws/install/my_robot_controller/bin/
