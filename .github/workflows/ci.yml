@@ -39,7 +39,14 @@ jobs:
         run: |
           docker pull tangbr/project1_ros2:latest
           docker run --rm --name test_ros_container tangbr/project1_ros2 /bin/bash -c "
+          echo 'Verifying package structure...'
           ls -al /root/dev_ws/src/my_robot_controller && \
+          echo 'Setting up ROS environment...'
           source /opt/ros/jazzy/setup.bash && \
           source /root/dev_ws/install/setup.bash && \
+          echo 'Ensuring move_robot.py is executable...'
+          chmod +x /root/dev_ws/src/my_robot_controller/my_robot_controller/move_robot.py && \
+          echo 'Checking if my_robot_controller package is installed...'
+          ros2 pkg list | grep my_robot_controller && \
+          echo 'Running move_robot node...'
           ros2 run my_robot_controller move_robot"
