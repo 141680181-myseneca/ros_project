@@ -3,7 +3,7 @@ name: ROS 2 CI/CD Pipeline
 on:
   push:
     branches:
-      - main  # Runs on pushes to the main branch
+      - project_ros_gaz  # Runs on pushes to the main branch
   pull_request:
 
 jobs:
