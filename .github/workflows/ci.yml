@@ -38,4 +38,4 @@ jobs:
       - name: Pull and Run the Docker Container
         run: |
           docker pull tangbr/project1_ros2:latest
-          docker run --rm tangbr/project1_ros2
+          docker run --rm --name test_ros_container tangbr/project1_ros2 /bin/bash -c "source /opt/ros/jazzy/setup.bash && ros2 run my_robot_controller move_robot"
