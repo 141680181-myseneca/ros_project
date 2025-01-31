@@ -35,6 +35,9 @@ jobs:
     runs-on: ubuntu-24.04  # Consistently use Ubuntu 24.04 here too for testing
 
     steps:
+      - name: Set Up Docker
+        uses: docker/setup-buildx-action@v2  # Ensures Docker is installed for testing
+
       - name: Pull and Run the Docker Container
         run: |
           docker pull tangbr/project1_ros2:latest
