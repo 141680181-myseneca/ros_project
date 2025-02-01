@@ -1,5 +1,5 @@
 # Use a ROS 2 Humble base image (Ubuntu 22.04 / jammy)
-FROM ros:humble-desktop
+FROM ros:humble-ros-base
 
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -29,24 +29,24 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -y \
     gazebo11 \
     libgazebo11-dev
 
-# (Remaining steps: create your workspace, copy your source, build with colcon, etc.)
+# (The rest of your Dockerfile remains the same, e.g., creating a workspace, copying source code, building, etc.)
 # For example:
 
 # Create a workspace for your ROS 2 package
 RUN mkdir -p /root/dev_ws/src
 WORKDIR /root/dev_ws
 
-# Copy the entire src directory (preserving your folder structure)
+# Copy the entire src directory
 COPY src /root/dev_ws/src
 
-# Verify package existence
+# Verify package files exist
 RUN ls -R /root/dev_ws/src || { echo "ERROR: src directory missing!"; exit 1; }
 RUN test -f /root/dev_ws/src/my_robot_controller/setup.py || { echo "ERROR: setup.py not found!"; exit 1; }
 RUN test -f /root/dev_ws/src/my_robot_controller/package.xml || { echo "ERROR: package.xml not found!"; exit 1; }
 RUN echo "Colcon will use /root/dev_ws/src"
 RUN chmod -R 755 /root/dev_ws/src
 
-# Install ROS dependencies for your workspace and build it
+# Build the workspace with colcon
 RUN /bin/bash -c "source /opt/ros/humble/setup.bash && \
     echo 'Updating dependencies...' && \
     rosdep update && \
@@ -57,14 +57,14 @@ RUN /bin/bash -c "source /opt/ros/humble/setup.bash && \
     colcon build --symlink-install --base-paths /root/dev_ws/src --packages-select my_robot_controller && \
     source install/setup.bash"
 
-# (Optional) Verify that executables were installed
+# (Optional) Verify installed executables
 RUN ls -al /root/dev_ws/install/my_robot_controller/bin/
 
-# Copy and set the entrypoint script
+# Copy the entrypoint script and set permissions
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
-# Set entrypoint
+# Set the entrypoint
 ENTRYPOINT ["/entrypoint.sh"]
 
 # Default command to run your node
