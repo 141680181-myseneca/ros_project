@@ -10,7 +10,7 @@ RUN apt-get update && apt-get install -y curl gnupg
 RUN curl -s https://packages.osrfoundation.org/gazebo.key | apt-key add - && \
     echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable jammy main" > /etc/apt/sources.list.d/gazebo-stable.list
 
-# Update and install system dependencies including Gazebo 11 packages
+# Update and install system dependencies including Gazebo packages for Jammy
 RUN apt-get update && apt-get upgrade -y && apt-get install -y \
     software-properties-common \
     python3 \
@@ -26,27 +26,26 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -y \
     libeigen3-dev \
     libprotobuf-dev protobuf-compiler \
     libboost-all-dev \
-    gazebo11 \
-    libgazebo11-dev
+    gazebo \
+    libgazebo-dev
 
-# (The rest of your Dockerfile remains the same, e.g., creating a workspace, copying source code, building, etc.)
-# For example:
+# (The remainder of your Dockerfile: setting up your ROS workspace, copying source code, building with colcon, etc.)
 
 # Create a workspace for your ROS 2 package
 RUN mkdir -p /root/dev_ws/src
 WORKDIR /root/dev_ws
 
-# Copy the entire src directory
+# Copy the entire src directory (preserving your folder structure)
 COPY src /root/dev_ws/src
 
-# Verify package files exist
+# Verify that key package files exist
 RUN ls -R /root/dev_ws/src || { echo "ERROR: src directory missing!"; exit 1; }
 RUN test -f /root/dev_ws/src/my_robot_controller/setup.py || { echo "ERROR: setup.py not found!"; exit 1; }
 RUN test -f /root/dev_ws/src/my_robot_controller/package.xml || { echo "ERROR: package.xml not found!"; exit 1; }
 RUN echo "Colcon will use /root/dev_ws/src"
 RUN chmod -R 755 /root/dev_ws/src
 
-# Build the workspace with colcon
+# Install ROS dependencies for your workspace and build it with colcon
 RUN /bin/bash -c "source /opt/ros/humble/setup.bash && \
     echo 'Updating dependencies...' && \
     rosdep update && \
@@ -57,10 +56,10 @@ RUN /bin/bash -c "source /opt/ros/humble/setup.bash && \
     colcon build --symlink-install --base-paths /root/dev_ws/src --packages-select my_robot_controller && \
     source install/setup.bash"
 
-# (Optional) Verify installed executables
+# (Optional) Verify that executables are installed
 RUN ls -al /root/dev_ws/install/my_robot_controller/bin/
 
-# Copy the entrypoint script and set permissions
+# Copy the entrypoint script and set it as executable
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
