@@ -9,9 +9,9 @@ setup(
     name=package_name,
     version='0.0.1',
     packages=find_packages(where='.'),
-    package_dir={'': '.'},  # Packages are in the current folder
+    package_dir={'': '.'},
     data_files=[
-        # Install an empty marker file for ament.
+        # Install the marker file for ament index:
         ('share/ament_index/resource_index/packages', ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
         ('lib/' + package_name, glob('my_robot_controller/*.py')),
