@@ -55,7 +55,8 @@ RUN /bin/bash -c "source /opt/ros/jazzy/setup.bash && \
 RUN /bin/bash -c "source /opt/ros/jazzy/setup.bash && \
     rosdep update && \
     rosdep install --from-paths src --ignore-src -r -y && \
-    colcon build --symlink-install --base-paths /root/dev_ws/src && \  
+    ls -R /root/dev_ws/src || { echo "ERROR: src directory missing!"; exit 1; } && \
+    colcon build --symlink-install --packages-select my_robot_controller && \  
     source install/setup.bash && \
     echo 'Verifying colcon build output...' && \
     if [ ! -d '/root/dev_ws/install/my_robot_controller' ]; then \

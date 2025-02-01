@@ -11,7 +11,7 @@ setup(
     package_dir={'': 'src'},  # Ensures correct package structure
     options={
         'build': {'build_base': 'build'},
-        'install': {'egg_base': 'src'}  # 👈 Ensure egg_base points to src/
+        'install': {'egg_base': '.'}  # 👈 Ensure egg_base points to src/
     },    
     data_files=[
         ('share/ament_index/resource_index/packages', ['package.xml']),
