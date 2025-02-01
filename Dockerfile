@@ -1,13 +1,14 @@
-# Use a ROS 2 Jazzy base image based on Ubuntu 20.04 focal
-FROM osrf/ros:jazzy-desktop-focal
+FROM ubuntu:20.04
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Add the OSRF Gazebo repository (now it naturally matches focal)
+# Install necessary dependencies and ROS 2 Jazzy (if available)
+# [Your installation commands for ROS 2 Jazzy go here]
+
+# Add the OSRF Gazebo repository (using focal)
 RUN curl -s https://packages.osrfoundation.org/gazebo.key | apt-key add - && \
     echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable focal main" > /etc/apt/sources.list.d/gazebo-stable.list
 
-# Install system dependencies and Gazebo (adjust Gazebo version as required)
 RUN apt-get update && apt-get upgrade -y && apt-get install -y \
     software-properties-common \
     python3 \
@@ -24,7 +25,7 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -y \
     libeigen3-dev \
     libprotobuf-dev protobuf-compiler \
     libboost-all-dev \
-    gazebo11  \
+    gazebo11 \
     libgazebo11-dev
 
 # Ensure the ROS environment is sourced on shell startup
