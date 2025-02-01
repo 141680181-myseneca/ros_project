@@ -4,6 +4,10 @@ FROM osrf/ros:jazzy-desktop
 # Set noninteractive installation mode
 ENV DEBIAN_FRONTEND=noninteractive
 
+# Add the OSRF Gazebo repository with a distribution override (using focal)
+RUN wget -O - http://packages.osrfoundation.org/gazebo.key | apt-key add - && \
+    echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable focal main" > /etc/apt/sources.list.d/gazebo-stable.list
+
 # Install system dependencies and Gazebo (adjust Gazebo version as required)
 RUN apt-get update && apt-get upgrade -y && apt-get install -y \
     software-properties-common \
