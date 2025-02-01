@@ -1,10 +1,9 @@
-# Use a ROS 2 Jazzy base image (adjust if you use a different distribution)
-FROM osrf/ros:jazzy-desktop
+# Use a ROS 2 Jazzy base image based on Ubuntu 20.04 focal
+FROM osrf/ros:jazzy-desktop-focal
 
-# Set noninteractive installation mode
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Add the OSRF Gazebo repository with a distribution override (using focal)
+# Add the OSRF Gazebo repository (now it naturally matches focal)
 RUN curl -s https://packages.osrfoundation.org/gazebo.key | apt-key add - && \
     echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable focal main" > /etc/apt/sources.list.d/gazebo-stable.list
 
