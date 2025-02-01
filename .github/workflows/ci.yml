@@ -7,7 +7,7 @@ on:
 
 jobs:
   build-and-push:
-    runs-on: ubuntu-24.04  # Specifies the use of Ubuntu 24.04 for the runner
+    runs-on: ubuntu-24.04  # Use Ubuntu 24.04 for the runner
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
@@ -36,7 +36,7 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-      # No Docker installation step; Docker is preinstalled on the runner
+      # (No Docker installation step is necessary since Docker is preinstalled on the runner)
 
       - name: Pull and Run the Docker Container
         run: |
@@ -44,7 +44,7 @@ jobs:
           timeout 10s docker run --rm --name test_ros_container tangbr/project1_ros2 /bin/bash -c '
           
           echo "Setting up ROS environment..."
-          # Source ROS 2 Humble and workspace setup files
+          # Source ROS 2 Humble and your workspace setup (all references use Humble)
           source /opt/ros/humble/setup.bash && \
           source /root/dev_ws/install/setup.bash
           
@@ -95,8 +95,8 @@ jobs:
           /root/dev_ws/install/my_robot_controller/bin/move_robot || { echo "❌ ERROR: move_robot failed manually"; exit 1; }
           
           echo "Preparing to run move_robot via ros2 run..."
-          # Prepend the workspace install to AMENT_PREFIX_PATH
-          export AMENT_PREFIX_PATH=/root/dev_ws/install:$AMENT_PREFIX_PATH
+          # Force the AMENT_PREFIX_PATH to the top-level install directory
+          export AMENT_PREFIX_PATH=/root/dev_ws/install
           
           echo "Running move_robot node (with timeout)..."
           source /opt/ros/humble/setup.bash && \
