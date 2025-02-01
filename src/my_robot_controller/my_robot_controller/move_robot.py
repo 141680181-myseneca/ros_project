@@ -13,9 +13,12 @@ class RobotMover(Node):
 
     def move_robot(self):
         msg = Twist()
-        msg.linear.x = 0.5  # Move forward
-        msg.angular.z = 0.2  # Slight turn
+        # Set linear and angular components to simulate diagonal movement:
+        msg.linear.x = 0.5    # forward motion
+        msg.linear.y = 0.5    # lateral motion for diagonal effect
+        msg.angular.z = 0.1   # slight rotation (optional)
         self.publisher_.publish(msg)
+
 
 def main(args=None):
     rclpy.init(args=args)
@@ -24,6 +27,7 @@ def main(args=None):
         start_time = time.time()
         while rclpy.ok():
             rclpy.spin_once(node)
+            # Stop after 5 seconds for demo purposes
             if time.time() - start_time > 5:
                 node.get_logger().info("Shutting down after timeout...")
                 break

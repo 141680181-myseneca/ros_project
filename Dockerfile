@@ -1,10 +1,10 @@
-# Use a ROS 2 base image that is compatible with Ubuntu 24.04
+# Use a ROS 2 Jazzy base image (adjust if you use a different distribution)
 FROM osrf/ros:jazzy-desktop
 
 # Set noninteractive installation mode
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Install system dependencies
+# Install system dependencies and Gazebo (adjust Gazebo version as required)
 RUN apt-get update && apt-get upgrade -y && apt-get install -y \
     software-properties-common \
     python3 \
@@ -20,52 +20,54 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -y \
     pkg-config \
     libeigen3-dev \
     libprotobuf-dev protobuf-compiler \
-    libboost-all-dev
+    libboost-all-dev \
+    gazebo11  \
+    libgazebo11-dev
 
-# Source ROS 2 environment
-RUN echo "source /opt/ros/jazzy/setup.bash" >> ~/.bashrc
+# Ensure the ROS environment is sourced on shell startup
+RUN echo "source /opt/ros/jazzy/setup.sh" >> ~/.bashrc
 
-# Create a workspace for your ROS 2 package
+# Create a ROS workspace
 RUN mkdir -p /root/dev_ws/src
 WORKDIR /root/dev_ws
 
-# Copy the entire src directory, maintaining your structure
+# Copy the entire src directory (keeping your multi-level folder structure)
 COPY src /root/dev_ws/src
 
-# Verify package directory before proceeding
+# Verify that the package directory and key files exist
 RUN ls -R /root/dev_ws/src || { echo "ERROR: src directory missing!"; exit 1; }
 RUN test -f /root/dev_ws/src/my_robot_controller/setup.py || { echo "ERROR: setup.py not found!"; exit 1; }
 RUN test -f /root/dev_ws/src/my_robot_controller/package.xml || { echo "ERROR: package.xml not found!"; exit 1; }
 
-# Display src path to ensure correctness
+# Display confirmation of the workspace structure
 RUN echo "Colcon will use /root/dev_ws/src"
 
-# Fix permissions (optional)
+# (Optional) Fix permissions if needed
 RUN chmod -R 755 /root/dev_ws/src
 
-# Install dependencies
-RUN /bin/bash -c "source /opt/ros/jazzy/setup.bash && \
+# Install ROS dependencies for your workspace
+RUN /bin/bash -c "source /opt/ros/jazzy/setup.sh && \
     echo 'Updating dependencies...' && \
     rosdep update && \
     rosdep install --from-paths /root/dev_ws/src --ignore-src -r -y"
 
-# **CLEAN & BUILD PACKAGE (Fix 3)**
-RUN /bin/bash -c "source /opt/ros/jazzy/setup.bash && \
+# Clean previous build files and build the workspace from scratch
+RUN /bin/bash -c "source /opt/ros/jazzy/setup.sh && \
     echo 'Cleaning previous build files...' && \
     rm -rf build install log src/my_robot_controller.egg-info && \
     echo 'Building the workspace from scratch...' && \
     colcon build --symlink-install --base-paths /root/dev_ws/src --packages-select my_robot_controller && \
-    source install/setup.bash"
+    source install/setup.sh"
 
-# Verify executables
+# (Optional) Verify that the built executables exist
 RUN ls -al /root/dev_ws/install/my_robot_controller/bin/
 
-# Copy the entrypoint script
+# Copy the entrypoint script and ensure it is executable
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
-# Set entrypoint
+# Set the entrypoint script
 ENTRYPOINT ["/entrypoint.sh"]
 
-# Default command to run the node
+# Default command to run your node (this will later command Gazebo to simulate your robot)
 CMD ["ros2", "run", "my_robot_controller", "move_robot"]
