@@ -12,7 +12,7 @@ setup(
     package_dir={'': '.'},  # Avoid using 'src', which causes build issues
     options={
         'build': {'build_base': 'build'},
-        'install': {'egg_base': current_dir}  # Ensure egg_base is correctly set
+        # Removed egg_base option from install command
     },    
     data_files=[
         ('share/ament_index/resource_index/packages', ['package.xml']),
