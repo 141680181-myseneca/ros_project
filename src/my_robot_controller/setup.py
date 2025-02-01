@@ -3,6 +3,7 @@ import os
 from glob import glob
 
 package_name = 'my_robot_controller'
+current_dir = os.path.dirname(os.path.abspath(__file__))  # Get absolute path of setup.py
 
 setup(
     name=package_name,
@@ -11,14 +12,14 @@ setup(
     package_dir={'': 'src'},  # Ensures correct package structure
     options={
         'build': {'build_base': 'build'},
-        'install': {'egg_base': os.path.abspath("src")}  # 👈 Ensure egg_base points to src/
+        'install': {'egg_base': os.path.abspath(os.path.join(current_dir, ".."))}  # Correctly set egg_base
     },    
     data_files=[
-        ('share/ament_index/resource_index/packages', ['package.xml']),
-        ('share/' + package_name, ['package.xml']),
-        ('lib/' + package_name, glob('src/my_robot_controller/my_robot_controller/*.py')),  # Fix package detection
-        ('share/' + package_name, glob('launch/*.launch.py')),
-        ('share/' + package_name + '/config', glob('config/*.yaml')),
+        ('share/ament_index/resource_index/packages', [os.path.join(current_dir, "package.xml")]),
+        ('share/' + package_name, [os.path.join(current_dir, "package.xml")]),
+        ('lib/' + package_name, glob(os.path.join(current_dir, "my_robot_controller", "*.py"))),
+        ('share/' + package_name, glob(os.path.join(current_dir, "launch", "*.launch.py"))),
+        ('share/' + package_name + '/config', glob(os.path.join(current_dir, "config", "*.yaml"))),
     ],
     install_requires=['setuptools'],
     zip_safe=False,
