@@ -51,7 +51,7 @@ RUN /bin/bash -c "source /opt/ros/jazzy/setup.bash && \
     echo 'Cleaning previous build files...' && \
     rm -rf build install log && \
     echo 'Building the workspace from scratch...' && \
-    colcon build --symlink-install --base-paths /root/dev_ws && \
+    colcon build --symlink-install --packages-select my_robot_controller --event-handlers console_cohesion+ && \
     source install/setup.bash"
 
 # Verify build output
