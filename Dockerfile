@@ -48,7 +48,7 @@ RUN /bin/bash -c "source /opt/ros/jazzy/setup.bash && \
     echo 'Cleaning previous build files...' && \
     rm -rf build install log && \
     echo 'Building the workspace from scratch...' && \
-    colcon build --symlink-install --base-paths /root/dev_ws/src && \
+    colcon build --symlink-install --packages-select my_robot_controller && \
     source install/setup.bash"
 
 # Build and install the ROS 2 package
