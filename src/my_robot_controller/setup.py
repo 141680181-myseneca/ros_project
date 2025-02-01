@@ -9,6 +9,10 @@ setup(
     version='0.0.1',
     packages=find_packages(where="src"),  # Ensures package discovery inside 'src/'
     package_dir={'': 'src'},  # Ensures correct package structure
+    options={
+        'build': {'build_base': 'build'},
+        'install': {'egg_base': 'src'}  # 👈 Ensure egg_base points to src/
+    },    
     data_files=[
         ('share/ament_index/resource_index/packages', ['package.xml']),
         ('share/' + package_name, ['package.xml']),

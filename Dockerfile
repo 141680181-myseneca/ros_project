@@ -32,8 +32,13 @@ WORKDIR /root/dev_ws
 # Copy the entire src directory, maintaining your structure
 COPY src /root/dev_ws/src
 
-# Verify package directory structure
-RUN ls -R /root/dev_ws/src/
+# Verify package directory before proceeding
+RUN ls -R /root/dev_ws/src || { echo "ERROR: src directory missing!"; exit 1; }
+RUN test -f /root/dev_ws/src/my_robot_controller/setup.py || { echo "ERROR: setup.py not found!"; exit 1; }
+RUN test -f /root/dev_ws/src/my_robot_controller/package.xml || { echo "ERROR: package.xml not found!"; exit 1; }
+
+# Display src path to ensure correctness
+RUN echo "Colcon will use /root/dev_ws/src"
 
 # Fix permissions (optional)
 RUN chmod -R 755 /root/dev_ws/src
@@ -43,14 +48,14 @@ RUN /bin/bash -c "source /opt/ros/jazzy/setup.bash && \
     echo 'Cleaning previous build files...' && \
     rm -rf build install log && \
     echo 'Building the workspace from scratch...' && \
-    colcon build --symlink-install && \
+    colcon build --symlink-install --base-paths /root/dev_ws/src && \
     source install/setup.bash"
 
-# Install missing dependencies and ensure package installation
+# Build and install the ROS 2 package
 RUN /bin/bash -c "source /opt/ros/jazzy/setup.bash && \
     rosdep update && \
     rosdep install --from-paths src --ignore-src -r -y && \
-    colcon build --symlink-install --packages-select my_robot_controller && \
+    colcon build --symlink-install --base-paths /root/dev_ws/src && \  
     source install/setup.bash && \
     echo 'Verifying colcon build output...' && \
     if [ ! -d '/root/dev_ws/install/my_robot_controller' ]; then \
