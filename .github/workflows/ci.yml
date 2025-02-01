@@ -8,7 +8,6 @@ on:
 jobs:
   build-and-push:
     runs-on: ubuntu-24.04  # Specifies the use of Ubuntu 24.04 for the runner
-
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
@@ -32,15 +31,17 @@ jobs:
 
   test-container:
     needs: build-and-push
-    runs-on: ubuntu-24.04  # Now explicitly using Ubuntu 24.04
+    runs-on: ubuntu-24.04  # Explicitly using Ubuntu 24.04 as required
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-      - name: Install Docker
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y docker.io
+      # Remove the Docker installation step to avoid updating system packages that lead to conflicts.
+      # Docker is already preinstalled on the runner.
+      #- name: Install Docker
+      #  run: |
+      #    sudo apt-get update
+      #    sudo apt-get install -y docker.io
 
       - name: Pull and Run the Docker Container
         run: |
