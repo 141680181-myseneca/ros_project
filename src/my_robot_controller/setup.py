@@ -1,4 +1,4 @@
-from setuptools import setup, find_packages
+from setuptools import setup
 from glob import glob
 import os
 
@@ -7,22 +7,21 @@ package_name = 'my_robot_controller'
 setup(
     name=package_name,
     version='0.0.1',
-    # Using find_packages(where='.') will automatically find your package and any subpackages.
-    packages=find_packages(where='.'),
-    package_dir={'': '.'},
+    # Explicitly list the package rather than using find_packages
+    packages=[package_name],
     data_files=[
-        # Install the marker file for the ament index so ROS 2 can locate your package.
-        ('share/ament_index/resource_index/packages', ['resource/' + package_name]),
-        # Install package.xml so that it is available for ROS 2 tooling.
+        # Install the marker file for the ament index:
+        ('share/ament_index/resource_index/packages', [os.path.join('resource', package_name)]),
+        # Install package.xml for ROS 2 tooling:
         ('share/' + package_name, ['package.xml']),
-        # Optionally include your Python modules (if desired)
-        ('lib/' + package_name, glob('my_robot_controller/*.py')),
-        # Include launch files (if you add any) and config files.
+        # Optionally include your Python modules:
+        ('lib/' + package_name, glob(os.path.join(package_name, '*.py'))),
+        # Include launch and config files if they exist:
         ('share/' + package_name + '/launch', glob('launch/*.launch.py')),
         ('share/' + package_name + '/config', glob('config/*.yaml')),
     ],
     install_requires=['setuptools'],
-    zip_safe=False,
+    zip_safe=True,
     maintainer='Xiao Ming Tang',
     maintainer_email='xmtang1@myseneca.ca',
     description='A simple robot controller for ROS 2.',
@@ -30,7 +29,6 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            # This registers the executable “move_robot” so that ROS 2 will be able to find it.
             'move_robot = my_robot_controller.move_robot:main'
         ],
     },

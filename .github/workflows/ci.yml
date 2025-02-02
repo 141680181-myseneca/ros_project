@@ -28,7 +28,8 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: tangbr/project1_ros2:latest  # Modify the tag as needed
-
+          no-cache: true
+          
   test-container:
     needs: build-and-push
     runs-on: ubuntu-24.04
