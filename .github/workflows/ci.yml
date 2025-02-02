@@ -58,11 +58,11 @@ jobs:
           export PYTHONPATH=$PYTHONPATH:/root/dev_ws/src/my_robot_controller
           
           echo "Verifying colcon build output..."
-          if [ ! -d /root/dev_ws/install/my_robot_controller ]; then
+          if [ ! -f /root/dev_ws/install/share/ament_index/resource_index/packages/my_robot_controller ]; then
             echo "❌ ERROR: colcon build failed, package not installed!";
             exit 1;
           fi
-          
+
           echo "Making move_robot.py executable..."
           chmod +x /root/dev_ws/install/my_robot_controller/bin/move_robot
           
