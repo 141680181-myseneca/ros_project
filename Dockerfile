@@ -3,16 +3,15 @@ FROM ros:humble-ros-base
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Install curl and gnupg (if not already installed)
-RUN apt-get update && apt-get install -y curl gnupg
+# Install curl, gnupg, and other system dependencies
+RUN apt-get update && apt-get install -y curl gnupg software-properties-common
 
 # Add the OSRF Gazebo repository for Ubuntu 22.04 (jammy)
 RUN curl -s https://packages.osrfoundation.org/gazebo.key | apt-key add - && \
     echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable jammy main" > /etc/apt/sources.list.d/gazebo-stable.list
 
-# Update and install system dependencies including Gazebo packages for Jammy
+# Update and install additional system dependencies including Gazebo
 RUN apt-get update && apt-get upgrade -y && apt-get install -y \
-    software-properties-common \
     python3 \
     python3-pip \
     python3-venv \
@@ -28,8 +27,6 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -y \
     libboost-all-dev \
     gazebo \
     libgazebo-dev
-
-# (The remainder of your Dockerfile: setting up your ROS workspace, copying source code, building with colcon, etc.)
 
 # Create a workspace for your ROS 2 package
 RUN mkdir -p /root/dev_ws/src

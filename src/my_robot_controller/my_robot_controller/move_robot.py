@@ -19,7 +19,6 @@ class RobotMover(Node):
         msg.angular.z = 0.1   # slight rotation (optional)
         self.publisher_.publish(msg)
 
-
 def main(args=None):
     rclpy.init(args=args)
     node = RobotMover()

@@ -6,10 +6,10 @@
 
   <maintainer email="xmtang1@myseneca.ca">Xiao Ming Tang</maintainer>
   <license>BSD</license>
-
   <author email="xmtang1@myseneca.ca">Xiao Ming Tang</author>
 
-  <buildtool_depend>ament_cmake</buildtool_depend>
+  <!-- Use ament_python as the build tool -->
+  <buildtool_depend>ament_python</buildtool_depend>
   <build_depend>rclpy</build_depend>
   <exec_depend>rclpy</exec_depend>
 

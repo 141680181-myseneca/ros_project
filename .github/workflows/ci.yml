@@ -27,16 +27,14 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: tangbr/project1_ros2:latest  # Modify accordingly
+          tags: tangbr/project1_ros2:latest  # Modify the tag as needed
 
   test-container:
     needs: build-and-push
-    runs-on: ubuntu-24.04  # Explicitly using Ubuntu 24.04 as required
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
-
-      # (No Docker installation step is necessary since Docker is preinstalled on the runner)
 
       - name: Pull and Run the Docker Container
         run: |
@@ -44,7 +42,6 @@ jobs:
           timeout 10s docker run --rm --name test_ros_container tangbr/project1_ros2 /bin/bash -c '
           
           echo "Setting up ROS environment..."
-          # Source ROS 2 Humble and your workspace setup (all references use Humble)
           source /opt/ros/humble/setup.bash && \
           source /root/dev_ws/install/setup.bash
           
@@ -75,13 +72,6 @@ jobs:
           echo "Checking installed package in site-packages/..."
           ls -al /root/dev_ws/install/my_robot_controller/lib/python*/site-packages/
           
-          echo "Checking installed ROS 2 executables..."
-          if [ -d "/root/dev_ws/install/my_robot_controller/lib/my_robot_controller/" ]; then
-            ls -al /root/dev_ws/install/my_robot_controller/lib/my_robot_controller/
-          else
-            echo "⚠️ WARNING: No executables found in expected location"
-          fi
-          
           echo "Verifying AMENT_PREFIX_PATH..."
           echo $AMENT_PREFIX_PATH
           
@@ -95,7 +85,6 @@ jobs:
           /root/dev_ws/install/my_robot_controller/bin/move_robot || { echo "❌ ERROR: move_robot failed manually"; exit 1; }
           
           echo "Preparing to run move_robot via ros2 run..."
-          # Force the AMENT_PREFIX_PATH to the top-level install directory
           export AMENT_PREFIX_PATH=/root/dev_ws/install
           
           echo "Running move_robot node (with timeout)..."

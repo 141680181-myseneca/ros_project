@@ -3,7 +3,6 @@ from glob import glob
 import os
 
 package_name = 'my_robot_controller'
-current_dir = os.path.dirname(os.path.abspath(__file__))
 
 setup(
     name=package_name,
@@ -14,8 +13,10 @@ setup(
         # Install the marker file for ament index:
         ('share/ament_index/resource_index/packages', ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
+        # Optionally, include Python modules if needed:
         ('lib/' + package_name, glob('my_robot_controller/*.py')),
-        ('share/' + package_name, glob('launch/*.launch.py')),
+        # Include launch files (if you add any) and config files:
+        ('share/' + package_name + '/launch', glob('launch/*.launch.py')),
         ('share/' + package_name + '/config', glob('config/*.yaml')),
     ],
     install_requires=['setuptools'],
