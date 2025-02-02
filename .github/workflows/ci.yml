@@ -63,26 +63,21 @@ jobs:
             exit 1;
           fi
 
-          echo "Making move_robot.py executable..."
-          chmod +x /root/dev_ws/install/my_robot_controller/bin/move_robot
           
-          echo "Checking installed executables in bin/..."
-          ls -al /root/dev_ws/install/my_robot_controller/bin/ || { echo "❌ ERROR: No executables found!"; exit 1; }
-          
-          echo "Checking installed package in site-packages/..."
-          ls -al /root/dev_ws/install/my_robot_controller/lib/python*/site-packages/
+          echo "Checking installed executables in merged install (bin/) directory..."
+          ls -al /root/dev_ws/install/bin/ || { echo "❌ ERROR: No executables found!"; exit 1; }
           
           echo "Verifying AMENT_PREFIX_PATH..."
           echo $AMENT_PREFIX_PATH
           
           echo "Manually adding package to PATH..."
-          export PATH=$PATH:/root/dev_ws/install/my_robot_controller/bin
+          export PATH=$PATH:/root/dev_ws/install/bin
           
           echo "Rechecking PATH variable..."
           echo $PATH
           
           echo "Trying to run move_robot manually..."
-          /root/dev_ws/install/my_robot_controller/bin/move_robot || { echo "❌ ERROR: move_robot failed manually"; exit 1; }
+          /root/dev_ws/install/bin/move_robot || { echo "❌ ERROR: move_robot failed manually"; exit 1; }
           
           echo "Preparing to run move_robot via ros2 run..."
           export AMENT_PREFIX_PATH=/root/dev_ws/install
