@@ -63,7 +63,7 @@ RUN /bin/bash -c "source /opt/ros/humble/setup.bash && \
     source install/setup.bash"
 
 # (Optional) List the installed executable to verify it is present
-RUN ls -al /root/dev_ws/install/my_robot_controller/bin/
+RUN ls -al /root/dev_ws/install/bin/
 
 # Copy the entrypoint script and set it as executable
 COPY entrypoint.sh /entrypoint.sh
