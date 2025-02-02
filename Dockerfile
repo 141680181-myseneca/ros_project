@@ -48,10 +48,10 @@ RUN echo "Colcon will use /root/dev_ws/src"
 RUN chmod -R 755 /root/dev_ws/src
 
 # Build your ROS workspace:
-#  • Source ROS 2 Humble
-#  • Update dependencies using rosdep
-#  • Clean previous build files
-#  • Build only the my_robot_controller package
+#   • Source ROS 2 Humble
+#   • Update dependencies using rosdep
+#   • Clean previous build files
+#   • Build with the merged install layout so that all packages are installed in a single directory
 RUN /bin/bash -c "source /opt/ros/humble/setup.bash && \
     echo 'Updating dependencies...' && \
     rosdep update && \
@@ -59,7 +59,7 @@ RUN /bin/bash -c "source /opt/ros/humble/setup.bash && \
     echo 'Cleaning previous build files...' && \
     rm -rf build install log && \
     echo 'Building the workspace from scratch...' && \
-    colcon build --symlink-install --base-paths /root/dev_ws/src --packages-select my_robot_controller && \
+    colcon build --symlink-install --merge-install --base-paths /root/dev_ws/src --packages-select my_robot_controller && \
     source install/setup.bash"
 
 # (Optional) List the installed executable to verify it is present
