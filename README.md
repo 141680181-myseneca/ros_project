@@ -15,3 +15,14 @@ To download the pre-built container from DockerHub, run:
 
 ```bash
 docker pull tangbr/project1_ros2:latest
+
+PROJ_ROS_GAZ/
+├── src/
+│   └── my_robot_controller/
+│       ├── package.xml
+│       ├── setup.py
+│       ├── my_robot_controller/
+│       │   ├── __init__.py
+│       │   └── move_robot.py
+│       └── resource/
+│           └── my_robot_controller  (marker file)

@@ -1,7 +1,12 @@
 # Use a ROS 2 Humble base image (Ubuntu 22.04 / jammy)
 FROM ros:humble-ros-base
 
+# Set noninteractive frontend for apt-get
 ENV DEBIAN_FRONTEND=noninteractive
+
+# Set Gazebo environment variables as recommended in the tutorial
+ENV LIBGL_ALWAYS_SOFTWARE=1
+ENV QT_QPA_PLATFORM=xcb
 
 # Install curl, gnupg, and other system dependencies
 RUN apt-get update && apt-get install -y curl gnupg software-properties-common
@@ -10,7 +15,7 @@ RUN apt-get update && apt-get install -y curl gnupg software-properties-common
 RUN curl -s https://packages.osrfoundation.org/gazebo.key | apt-key add - && \
     echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable jammy main" > /etc/apt/sources.list.d/gazebo-stable.list
 
-# Update and install additional system dependencies including Gazebo
+# Update and install additional system dependencies including Gazebo and ROS build tools
 RUN apt-get update && apt-get upgrade -y && apt-get install -y \
     python3 \
     python3-pip \
@@ -42,26 +47,30 @@ RUN test -f /root/dev_ws/src/my_robot_controller/package.xml || { echo "ERROR: p
 RUN echo "Colcon will use /root/dev_ws/src"
 RUN chmod -R 755 /root/dev_ws/src
 
-# Install ROS dependencies for your workspace and build it with colcon
+# Build your ROS workspace:
+#  • Source ROS 2 Humble
+#  • Update dependencies using rosdep
+#  • Clean previous build files
+#  • Build only the my_robot_controller package
 RUN /bin/bash -c "source /opt/ros/humble/setup.bash && \
     echo 'Updating dependencies...' && \
     rosdep update && \
     rosdep install --from-paths /root/dev_ws/src --ignore-src -r -y && \
     echo 'Cleaning previous build files...' && \
-    rm -rf build install log src/my_robot_controller.egg-info && \
+    rm -rf build install log && \
     echo 'Building the workspace from scratch...' && \
     colcon build --symlink-install --base-paths /root/dev_ws/src --packages-select my_robot_controller && \
     source install/setup.bash"
 
-# (Optional) Verify that executables are installed
+# (Optional) List the installed executable to verify it is present
 RUN ls -al /root/dev_ws/install/my_robot_controller/bin/
 
 # Copy the entrypoint script and set it as executable
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
-# Set the entrypoint
+# Set the entrypoint so that the ROS 2 and workspace environments are sourced
 ENTRYPOINT ["/entrypoint.sh"]
 
-# Default command to run your node
+# Default command to run your node via ros2 run (if no command is provided)
 CMD ["ros2", "run", "my_robot_controller", "move_robot"]
