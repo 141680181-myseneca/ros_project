@@ -13,6 +13,11 @@
   <build_depend>rclpy</build_depend>
   <exec_depend>rclpy</exec_depend>
 
+  
+  <!-- Adding geometry_msgs as both build and exec dependency -->
+  <build_depend>geometry_msgs</build_depend>
+  <exec_depend>geometry_msgs</exec_depend>
+  
   <export>
     <build_type>ament_python</build_type>
   </export>
