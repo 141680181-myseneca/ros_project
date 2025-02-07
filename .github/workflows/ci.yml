@@ -86,5 +86,5 @@ jobs:
           echo "Running move_robot node (with timeout)..."
           source /opt/ros/humble/setup.bash && \
           source /root/dev_ws/install/setup.bash && \
-          timeout 5s ros2 run my_robot_controller move_robot || { echo "❌ ERROR: move_robot failed to execute"; exit 1; }
+          timeout 5s ros2 run my_robot_controller move_robot || { echo "❌ ERROR: move_robot failed to execute"; ros2 doctor; exit 1; }
           '
