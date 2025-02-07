@@ -45,6 +45,9 @@ jobs:
             source /opt/ros/humble/setup.bash && \
             source /root/dev_ws/install/setup.bash
             
+            echo "ROS environment variables:"
+            env | grep ROS
+
             echo "Verifying package structure..."
             ls -R /root/dev_ws/src/my_robot_controller || { echo "❌ ERROR: Package directory missing!"; exit 1; }
             
