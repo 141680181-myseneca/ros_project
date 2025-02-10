@@ -40,7 +40,7 @@ jobs:
       - name: Pull and Run the Docker Container
         run: |
           docker pull tangbr/project1_ros2:latest
-          docker run -d --name test_ros_container tangbr/project1_ros2:latest
+          docker run -d --memory=1g --name test_ros_container tangbr/project1_ros2:latest
 
       - name: Execute Tests
         run: |
