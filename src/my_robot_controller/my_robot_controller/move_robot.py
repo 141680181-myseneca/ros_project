@@ -10,6 +10,8 @@ class RobotMover(Node):
     def __init__(self):
         super().__init__('robot_mover')
         self.publisher_ = self.create_publisher(Twist, '/cmd_vel', 10)
+        self.timer = self.create_timer(0.5, self.move_robot)
+        self.start_time = time.time()
         self.get_logger().info("RobotMover node has been started")
 
         # Attempt to start a background subprocess (e.g., a sensor simulator or additional control mechanism)
@@ -23,6 +25,11 @@ class RobotMover(Node):
         self.timer = self.create_timer(0.5, self.move_robot)
 
     def move_robot(self):
+        # Check for timeout to shut down the node
+        if time.time() - self.start_time > 5:  # runs for 5 seconds
+            self.get_logger().info("Shutting down after timeout...")
+            rclpy.shutdown()
+
         msg = Twist()
         msg.linear.x = 0.5    # forward motion
         msg.linear.y = 0.5    # lateral motion for diagonal effect
