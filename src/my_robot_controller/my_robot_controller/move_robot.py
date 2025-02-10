@@ -14,34 +14,34 @@ class RobotMover(Node):
         self.start_time = time.time()
         self.get_logger().info("RobotMover node has been started")
 
-        # Attempt to start a background subprocess (e.g., a sensor simulator or additional control mechanism)
-        # This is an example; replace the command with something relevant to your project or remove if unnecessary
+        # Attempt to start a background subprocess
         try:
-            self.process = subprocess.Popen(['your_command_here'], preexec_fn=os.setsid)
-            self.get_logger().info("Subprocess started successfully.")
+            self.process = subprocess.Popen(['ros2', 'topic', 'echo', '/cmd_vel'], preexec_fn=os.setsid)
+            self.get_logger().info("Background subprocess started successfully.")
         except Exception as e:
+            self.process = None
             self.get_logger().error(f"Failed to start subprocess: {str(e)}")
 
-        self.timer = self.create_timer(0.5, self.move_robot)
-
     def move_robot(self):
-        # Check for timeout to shut down the node
-        if time.time() - self.start_time > 5:  # runs for 5 seconds
+        # Stop after 5 seconds
+        if time.time() - self.start_time > 5:
             self.get_logger().info("Shutting down after timeout...")
+            self.stop()
+            self.destroy_node()
             rclpy.shutdown()
 
         msg = Twist()
-        msg.linear.x = 0.5    # forward motion
-        msg.linear.y = 0.5    # lateral motion for diagonal effect
-        msg.angular.z = 0.1   # slight rotation (optional)
+        msg.linear.x = 0.5
+        msg.linear.y = 0.5
+        msg.angular.z = 0.1
         self.publisher_.publish(msg)
-        self.get_logger().info('Moving robot: linear x %0.2f, y %0.2f, angular z %0.2f' % (msg.linear.x, msg.linear.y, msg.angular.z))
+        self.get_logger().info(f"Moving robot: linear x {msg.linear.x:.2f}, y {msg.linear.y:.2f}, angular z {msg.angular.z:.2f}")
 
     def stop(self):
-        self.get_logger().info('Stopping the robot and any subprocess...')
-        if self.process:
-            os.killpg(os.getpgid(self.process.pid), signal.SIGTERM)  # Terminate the process group
-            self.process.wait()  # Ensure the process resources are cleaned up
+        self.get_logger().info("Stopping the robot and any subprocess...")
+        if hasattr(self, 'process') and self.process:
+            os.killpg(os.getpgid(self.process.pid), signal.SIGTERM)
+            self.process.wait()
             self.process = None
 
 def main(args=None):
@@ -51,7 +51,7 @@ def main(args=None):
     try:
         rclpy.spin(node)
     except KeyboardInterrupt:
-        node.get_logger().info("Keyboard Interrupt (Ctrl+C) received, stopping the robot.")
+        node.get_logger().info("Keyboard Interrupt received, stopping the robot.")
     finally:
         node.stop()
         node.destroy_node()

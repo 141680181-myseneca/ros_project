@@ -31,7 +31,8 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -y \
     libprotobuf-dev protobuf-compiler \
     libboost-all-dev \
     gazebo \
-    libgazebo-dev
+    libgazebo-dev && \
+    rm -rf /var/lib/apt/lists/*
 
 # Create a workspace for your ROS 2 package
 RUN mkdir -p /root/dev_ws/src
@@ -59,9 +60,10 @@ RUN /bin/bash -c "source /opt/ros/humble/setup.bash && \
     echo 'Cleaning previous build files...' && \
     rm -rf build install log && \
     echo 'Building the workspace from scratch...' && \
-    colcon build --merge-install --base-paths /root/dev_ws/src --packages-select my_robot_controller && \
+    colcon build --merge-install --packages-select my_robot_controller && \
     source install/setup.bash"
 
+    # colcon build --merge-install --base-paths /root/dev_ws/src --packages-select my_robot_controller && \
 
 # (Optional) List the installed executable to verify it is present
 RUN ls -al /root/dev_ws/install/bin/
