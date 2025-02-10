@@ -29,7 +29,7 @@ jobs:
           push: true
           tags: tangbr/project1_ros2:latest
           no-cache: true
-          
+
   test-container:
     needs: build-and-push
     runs-on: ubuntu-24.04
@@ -57,41 +57,26 @@ jobs:
             free -m; \
             echo "Checking running processes..."; \
             top -b -n 1; \
-
-            # source /opt/ros/humble/setup.bash && \
-            # source /root/dev_ws/install/setup.bash && \
-
-            echo "Listing installed ROS 2 packages..."; 
-            ros2 pkg list;
-
-            echo "Checking installed executables...";
-            ls -lah /root/dev_ws/install/my_robot_controller/bin/ || echo "⚠️ WARNING: Executable directory missing! Build may have failed.";
-
-            echo "Verifying colcon build output...";
-            cat /root/dev_ws/log/latest_build/my_robot_controller/*.log || echo "⚠️ WARNING: No build logs found.";
-
-            echo "Attempting to run move_robot...";
-            timeout 15s ros2 run my_robot_controller move_robot || { echo "⚠️ WARNING: move_robot failed to execute"; }
-          
+            echo "Listing installed ROS 2 packages..."; \
+            ros2 pkg list; \
+            echo "Checking installed executables..."; \
+            ls -lah /root/dev_ws/install/my_robot_controller/bin/ || echo "⚠️ WARNING: Executable directory missing! Build may have failed."; \
+            echo "Verifying colcon build output..."; \
+            cat /root/dev_ws/log/latest_build/my_robot_controller/*.log || echo "⚠️ WARNING: No build logs found."; \
+            echo "Attempting to run move_robot..."; \
+            timeout 15s ros2 run my_robot_controller move_robot || echo "⚠️ WARNING: move_robot failed to execute"; \
             echo "Ensuring container is still running before ros2 doctor..."; \
             if docker ps -q -f name=test_ros_container | grep -q .; then \
               echo "Container is running, executing ros2 doctor..."; \
               docker exec -it test_ros_container bash -c "source /opt/ros/humble/setup.bash && source /root/dev_ws/install/setup.bash && ros2 doctor" || echo "⚠️ WARNING: ros2 doctor found issues"; \
-            else; \
+            else \
               echo "⚠️ WARNING: Container stopped before running ros2 doctor, skipping."; \
             fi; \
           '
-          # docker exec -it test_ros_container bash -c "source /opt/ros/humble/setup.bash && source /root/dev_ws/install/setup.bash && ros2 doctor" || { echo "⚠️ WARNING: ros2 doctor found issues"; }
-
-          # echo "Running ros2 doctor to diagnose the ROS 2 setup..."; \
-          # docker exec test_ros_container bash -c "source /opt/ros/humble/setup.bash && source /root/dev_ws/install/setup.bash && ros2 doctor" || { echo "⚠️ WARNING: ros2 doctor found issues"; }
-
-          #  timeout 10s docker exec test_ros_container bash -c "ros2 doctor" || { echo "⚠️ WARNING: ros2 doctor found issues"; }
           echo "Test complete."
 
-
       - name: Stop and Remove the Docker Container
-        if: always()  # This ensures the container is stopped even if the tests fail
+        if: always()
         run: |
           docker stop test_ros_container
           docker rm test_ros_container
