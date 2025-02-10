@@ -74,4 +74,5 @@ RUN chmod +x /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
 
 # Default command to run your node via ros2 run (if no command is provided)
-CMD ["ros2", "run", "my_robot_controller", "move_robot"]
+# CMD ["ros2", "run", "my_robot_controller", "move_robot"]
+CMD ["bash", "-c", "source /opt/ros/humble/setup.bash && source /root/dev_ws/install/setup.bash && ros2 run my_robot_controller move_robot"]
