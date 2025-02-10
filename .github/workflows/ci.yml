@@ -51,6 +51,10 @@ jobs:
               echo "⚠️ WARNING: move_robot failed to execute"
               exit 0  # Exit successfully even if ros2 run fails
             fi'
+            echo "Running ros2 doctor to diagnose the ROS 2 setup..."
+            if ! ros2 doctor; then
+              echo "⚠️ WARNING: ros2 doctor found issues"
+            fi'
           echo "Test complete."
 
       - name: Stop and Remove the Docker Container
