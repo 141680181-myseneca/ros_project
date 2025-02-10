@@ -42,6 +42,16 @@ jobs:
           docker pull tangbr/project1_ros2:latest
           docker run -d --memory=1g --name test_ros_container tangbr/project1_ros2:latest
 
+      - name: Monitor Docker Container Memory Usage
+        run: |
+          echo "Checking container memory usage..."
+          docker stats --no-stream
+
+      - name: Monitor Memory Usage Before Tests
+        run: |
+          echo "Checking system memory..."
+          free -m
+
       - name: Execute Tests
         run: |
           docker exec test_ros_container bash -c ' \
@@ -76,9 +86,16 @@ jobs:
             echo "Checking ROS 2 availability..."
             docker exec test_ros_container bash -c "source /opt/ros/humble/setup.bash && ros2 pkg list" || echo "⚠️ WARNING: ROS 2 not found!"
 
+            echo "Checking memory before running move_robot..."; \
+            free -m; \
 
             echo "Attempting to run move_robot..."; \
             timeout 15s ros2 run my_robot_controller move_robot || echo "⚠️ WARNING: move_robot failed to execute"; \
+
+            echo "Checking memory after execution..."; \
+            free -m'
+
+
 
             echo "Ensuring container is still running before ros2 doctor..."; \
             if docker ps -q -f name=test_ros_container | grep -q .; then \
