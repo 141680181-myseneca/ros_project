@@ -45,6 +45,10 @@ jobs:
       - name: Execute Tests
         run: |
           docker exec test_ros_container bash -c ' \
+            echo "Checking system memory..."; \
+            free -m; \
+            echo "Checking running processes..."; \
+            top -b -n 1; \
             source /opt/ros/humble/setup.bash && \
             source /root/dev_ws/install/setup.bash && \
             if ! timeout 5s ros2 run my_robot_controller move_robot; then \
