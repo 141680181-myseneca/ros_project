@@ -55,7 +55,9 @@ jobs:
               echo "⚠️ WARNING: move_robot failed to execute"; \
             fi'
           echo "Running ros2 doctor to diagnose the ROS 2 setup..."; \
-          timeout 10s docker exec test_ros_container bash -c "ros2 doctor" || { echo "⚠️ WARNING: ros2 doctor found issues"; }
+          docker exec test_ros_container bash -c "source /opt/ros/humble/setup.bash && source /root/dev_ws/install/setup.bash && ros2 doctor" || { echo "⚠️ WARNING: ros2 doctor found issues"; }
+
+          #  timeout 10s docker exec test_ros_container bash -c "ros2 doctor" || { echo "⚠️ WARNING: ros2 doctor found issues"; }
           echo "Test complete."
 
 
