@@ -47,56 +47,17 @@ jobs:
           docker exec test_ros_container bash -c ' \
             source /opt/ros/humble/setup.bash && \
             source /root/dev_ws/install/setup.bash && \
-            timeout 5s ros2 run my_robot_controller move_robot || { echo "⚠️ WARNING: move_robot failed to execute"; }
-          echo "Running ros2 doctor to diagnose the ROS 2 setup..."; \
-          ros2 doctor || { echo "⚠️ WARNING: ros2 doctor found issues"; }
-          #   if ! ros2 doctor; then \
-          #     echo "⚠️ WARNING: ros2 doctor found issues"; \
-          #   fi'
-          # echo "Test complete."
+            if ! timeout 5s ros2 run my_robot_controller move_robot; then \
+              echo "⚠️ WARNING: move_robot failed to execute"; \
+            fi; \
+            echo "Running ros2 doctor to diagnose the ROS 2 setup..."; \
+            if ! ros2 doctor; then \
+              echo "⚠️ WARNING: ros2 doctor found issues"; \
+            fi'
+          echo "Test complete."
 
       - name: Stop and Remove the Docker Container
         if: always()  # This ensures the container is stopped even if the tests fail
         run: |
-          docker stop test_ros_container; \
+          docker stop test_ros_container
           docker rm test_ros_container
-
-
-
-
-
-
-
-
-          # docker pull tangbr/project1_ros2:latest
-          # docker run --rm --name test_ros_container tangbr/project1_ros2 /bin/bash -c '
-          #   echo "Setting up ROS environment..."
-          #   source /opt/ros/humble/setup.bash && \
-          #   source /root/dev_ws/install/setup.bash
-            
-          #   echo "ROS environment variables:"
-          #   env | grep ROS
-
-          #   echo "Verifying package structure..."
-          #   ls -R /root/dev_ws/src/my_robot_controller || { echo "❌ ERROR: Package directory missing!"; exit 1; }
-            
-          #   echo "Checking if my_robot_controller package is installed..."
-          #   ros2 pkg list | grep my_robot_controller || { echo "❌ ERROR: Package not found in ROS 2!"; exit 1; }
-            
-          #   echo "Checking package contents before build..."
-          #   ls -R /root/dev_ws/src/my_robot_controller/my_robot_controller || { echo "❌ ERROR: Python package not found!"; exit 1; }
-            
-          #   echo "Trying to run move_robot manually..."
-          #   /root/dev_ws/install/bin/move_robot || { echo "⚠️ WARNING: move_robot failed manually"; }
-
-          #   echo "Preparing to run move_robot via ros2 run..."
-          #   export AMENT_PREFIX_PATH=/root/dev_ws/install
-            
-          #   echo "Running move_robot node (with timeout)..."
-          #   source /opt/ros/humble/setup.bash && \
-          #   source /root/dev_ws/install/setup.bash && \
-          #   timeout 5s ros2 run my_robot_controller move_robot || { echo "⚠️ WARNING: move_robot failed to execute"; }
-
-          #   echo "Running ros2 doctor to diagnose the ROS 2 setup..."
-          #   ros2 doctor || { echo "⚠️ WARNING: ros2 doctor found issues"; }
-          # '
