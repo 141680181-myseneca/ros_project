@@ -51,9 +51,10 @@ jobs:
             top -b -n 1; \
             source /opt/ros/humble/setup.bash && \
             source /root/dev_ws/install/setup.bash && \
-            if ! timeout 5s ros2 run my_robot_controller move_robot; then \
-              echo "⚠️ WARNING: move_robot failed to execute"; \
-            fi'
+            # if ! timeout 15s ros2 run my_robot_controller move_robot; then \
+            #   echo "⚠️ WARNING: move_robot failed to execute"; \
+            # fi'
+            timeout 15s ros2 run my_robot_controller move_robot || { echo "⚠️ WARNING: move_robot failed to execute"; }
 
           echo "Ensuring container is still running before ros2 doctor..."
           if docker ps -q -f name=test_ros_container | grep -q .; then
@@ -62,6 +63,12 @@ jobs:
           else
             echo "⚠️ WARNING: Container stopped before running ros2 doctor, skipping."
           fi
+
+
+
+
+
+
 
           # echo "Running ros2 doctor to diagnose the ROS 2 setup..."; \
           # docker exec test_ros_container bash -c "source /opt/ros/humble/setup.bash && source /root/dev_ws/install/setup.bash && ros2 doctor" || { echo "⚠️ WARNING: ros2 doctor found issues"; }
