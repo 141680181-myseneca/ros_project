@@ -66,6 +66,9 @@ RUN /bin/bash -c "source /opt/ros/humble/setup.bash && \
 # (Optional) List the installed executable to verify it is present
 RUN ls -al /root/dev_ws/install/bin/
 
+# (Optional) List the install folder to verify it is present
+RUN ls -al /root/dev_ws/install/
+
 # Copy the entrypoint script and set it as executable
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
