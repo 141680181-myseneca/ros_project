@@ -36,7 +36,9 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
-
+      - name: Set Entrypoint Permissions
+        run: |
+          chmod +x entrypoint.sh
       - name: Pull and Run the Docker Container
         run: |
           docker pull tangbr/project1_ros2:latest
