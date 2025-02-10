@@ -44,23 +44,23 @@ jobs:
 
       - name: Execute Tests
         run: |
-          docker exec test_ros_container bash -c '
+          docker exec test_ros_container bash -c ' \
             source /opt/ros/humble/setup.bash && \
             source /root/dev_ws/install/setup.bash && \
-            if ! ros2 run my_robot_controller move_robot; then
-              echo "⚠️ WARNING: move_robot failed to execute"
-              exit 0  # Exit successfully even if ros2 run fails
-            fi'
-            echo "Running ros2 doctor to diagnose the ROS 2 setup..."
-            if ! ros2 doctor; then
-              echo "⚠️ WARNING: ros2 doctor found issues"
+            if ! ros2 run my_robot_controller move_robot; then \
+              echo "⚠️ WARNING: move_robot failed to execute" \
+              exit 0  # Exit successfully even if ros2 run fails \
+            fi; \
+            echo "Running ros2 doctor to diagnose the ROS 2 setup..."; \
+            if ! ros2 doctor; then \
+              echo "⚠️ WARNING: ros2 doctor found issues"; \
             fi'
           echo "Test complete."
 
       - name: Stop and Remove the Docker Container
         if: always()  # This ensures the container is stopped even if the tests fail
         run: |
-          docker stop test_ros_container
+          docker stop test_ros_container; \
           docker rm test_ros_container
 
 
